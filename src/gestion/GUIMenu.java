@@ -19,22 +19,31 @@ public class GUIMenu extends javax.swing.JFrame {
      */
     
     DB data;
+    Logic lo;
     String user;
     Vendedor vend;
     
-    public GUIMenu(String _user) throws SQLException {
+    public GUIMenu(String _user,DB _data) throws SQLException {
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
         new Utilidades().scaleImage(logo);
 
-        data=new DB(false,"gestion","root","");
+        data=_data;
         user=_user;
         vend=data.createObjectVendedor(_user);
+        lo=new Logic(data);
         
         txtNombre.setText(vend.getName());
-        if(!_user.equals("admin")) txtApellido.setText(vend.getLastname());
-        else txtApellido.setVisible(false);
+        txtApellido.setText(vend.getLastname());
+        if(vend.isAdmin()){
+            if("admin".equals(user)) txtApellido.setVisible(false);
+        }
+        else {
+            btnNuevoVendedor.setEnabled(false);
+            btnEliminarVendedor.setEnabled(false);
+        }
+     
     }
 
     /**
@@ -56,6 +65,7 @@ public class GUIMenu extends javax.swing.JFrame {
         btnNuevoProducto = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         btnNuevoVendedor = new javax.swing.JMenuItem();
+        btnEliminarVendedor = new javax.swing.JMenuItem();
         btnCerrarSesion = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -87,7 +97,20 @@ public class GUIMenu extends javax.swing.JFrame {
         jMenu2.setText("Configuracion");
 
         btnNuevoVendedor.setText("Añadir vendedor");
+        btnNuevoVendedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoVendedorActionPerformed(evt);
+            }
+        });
         jMenu2.add(btnNuevoVendedor);
+
+        btnEliminarVendedor.setText("Eliminar vendedor");
+        btnEliminarVendedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarVendedorActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnEliminarVendedor);
 
         btnCerrarSesion.setText("Cerrar sesion");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
@@ -144,12 +167,23 @@ public class GUIMenu extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
+    private void btnNuevoVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoVendedorActionPerformed
+        // TODO add your handling code here:
+        new GUINuevoVendedor(data).setVisible(true);
+    }//GEN-LAST:event_btnNuevoVendedorActionPerformed
+
+    private void btnEliminarVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarVendedorActionPerformed
+        // TODO add your handling code here:
+        new GUIEliminarVendedor(data).setVisible(true);
+    }//GEN-LAST:event_btnEliminarVendedorActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnCerrarSesion;
+    private javax.swing.JMenuItem btnEliminarVendedor;
     private javax.swing.JMenuItem btnNuevaVenta;
     private javax.swing.JMenuItem btnNuevoProducto;
     private javax.swing.JMenuItem btnNuevoVendedor;

@@ -6,6 +6,7 @@
 package gestion;
 
 import java.sql.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -49,14 +50,11 @@ public class DB {
             createTableProductos();
             createTableVentas();
             
-            
-            
             //info
-            System.out.println("\n-----Cargar Info-----");
-            newLine(false,"empleados","'eze'","'1234'","'Amin'","'Eze'",43706393,"'2002-02-17'","'2021-10-27'",0,1);
+            /*System.out.println("\n-----Cargar Info-----");
             newLine(false,"clientes","'Amin'","'Carlos'",17860733,"'Pringles 425'",3);
             newLine(false,"productos",1111,"'Computadora'",123,3);
-            newLine(false,"ventas","'2020-09-26'","'Eze'","'Amin'",123);
+            newLine(false,"ventas","'2020-09-26'","'Eze'","'Amin'",123);*/
             
             MySQLCloseConnection();
         }
@@ -77,17 +75,20 @@ public class DB {
         }
     }
     
-    public void MySQLConnection(){
+    public boolean MySQLConnection(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+db_name,userDB,passDB);
             //System.out.println("Se inicio exitosamente la conexion");
             
             System.out.println("Opened"); 
+            return true;
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
+        
+        return false;
     }
     
     public void MySQLCloseConnection(){
@@ -109,7 +110,7 @@ public class DB {
                          "Password VARCHAR(20),"+
                          "Apellido VARCHAR(15),"+
                          "Nombre VARCHAR(15),"+
-                         "DNI FLOAT(8),"+
+                         "DNI DOUBLE PRECISION,"+
                          "Nacimiento DATE,"+
                          "Incorporacion DATE,"+
                          "Ventas INT(3),"+
@@ -130,7 +131,7 @@ public class DB {
             String query="CREATE TABLE Clientes ("+
                          "Apellido VARCHAR(15),"+
                          "Nombre VARCHAR(15),"+
-                         "DNI INT(8),"+
+                         "DNI DOUBLE PRECISION,"+
                          "Direccion VARCHAR(20),"+
                          "ProdComprados INT(3))";
             Statement st=conexion.createStatement();
@@ -176,10 +177,41 @@ public class DB {
         }
     }
     
-    //empleados
-    public void newLine(boolean conectar,String table,String _user,String _pass,String lastname,String name,float dni,String birthDate,String firstDate,int sold,int admin){
+    public boolean checkExistance(boolean conectar,String table,double dni){
+        
         try{
             if(conectar) MySQLConnection();
+        
+            String query="SELECT DNI FROM "+table;
+            Statement st=conexion.createStatement();
+            ResultSet rs=st.executeQuery(query);
+
+            while (rs.next()) {
+                if(dni==rs.getFloat("dni")){
+                    if(conectar) MySQLCloseConnection();
+                    return true;
+                }
+            }
+            
+            if(conectar) MySQLCloseConnection();
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+    
+        return false;
+    }
+    
+    //empleados
+    public boolean newLine(boolean conectar,String table,String _user,String _pass,String lastname,String name,double dni,String birthDate,String firstDate,int sold,int admin){
+        try{
+            if(conectar) MySQLConnection();
+            
+            if(checkExistance(false,table,dni)){
+                JOptionPane.showMessageDialog(null, "Ya existe un usuario con este DNI","Atencion",JOptionPane.WARNING_MESSAGE);
+                if(conectar) MySQLCloseConnection();
+                return false;
+            }
             
             String query="INSERT INTO "+table+" VALUES("+
                         _user+","+
@@ -196,14 +228,18 @@ public class DB {
             
             System.out.println("Se cargó la linea en la tabla "+table);
             if(conectar) MySQLCloseConnection();
+            
+            return true;
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
+        
+        return false;
     }
     
     //cliente
-    public void newLine(boolean conectar,String table,String lastname,String name,float dni,String address,int bought){
+    public void newLine(boolean conectar,String table,String lastname,String name,double dni,String address,int bought){
         try{
             if(conectar) MySQLConnection();
             
@@ -300,9 +336,9 @@ public class DB {
             ResultSet rs=st.executeQuery(query);
             
             String user,pass,lastname,name,nacimiento,incorporacion;
-            float dni;
+            double dni;
             int ventas;
-            boolean isAdmin;
+            boolean isAdmin=false;
             Vendedor vend = null;
 
             if(rs.next()){
@@ -310,13 +346,12 @@ public class DB {
                 pass=rs.getString("password");
                 lastname=rs.getString("apellido");
                 name=rs.getString("nombre");
-                dni=rs.getFloat("dni");
+                dni=rs.getDouble("dni");
                 nacimiento=rs.getString("nacimiento");
                 incorporacion=rs.getString("incorporacion");
                 ventas=rs.getInt("ventas");
                 
                 if(rs.getInt("admin")==1) isAdmin=true;
-                else isAdmin=false;
                 
                 vend=new Vendedor(user,pass,lastname,name,dni,nacimiento,incorporacion,ventas,isAdmin);
             }
@@ -330,5 +365,25 @@ public class DB {
         }
         
         return null;
+    }
+    
+    public boolean eraseLine(String table,double dni){
+        boolean conn=false;
+        
+        try{
+            MySQLConnection();
+
+            String query="DELETE FROM "+table+" WHERE dni="+Double.toString(dni);
+            Statement st=conexion.createStatement();
+            if(st.executeUpdate(query)!=0) conn=true; //si ==0 significa que no encontró el usuario
+            
+            MySQLCloseConnection();
+            return conn;
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
     }
 }

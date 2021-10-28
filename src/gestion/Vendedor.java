@@ -14,13 +14,13 @@ public class Vendedor {
     private String password;
     private String lastname;
     private String name;
-    private float dni;
+    private double dni;
     private String fechaNacimiento;
     private String fechaIncorporacion;
     private int vendidos;
-    private boolean isAdmin;
+    private boolean admin;
 
-    public Vendedor(String user, String password, String lastname, String name, float dni, String fechaNacimiento, String fechaIncorporacion, int vendidos, boolean isAdmin) {
+    public Vendedor(String user, String password, String lastname, String name, double dni, String fechaNacimiento, String fechaIncorporacion, int vendidos, boolean isAdmin) {
         this.user = user;
         this.password = password;
         this.lastname = lastname;
@@ -29,7 +29,7 @@ public class Vendedor {
         this.fechaNacimiento = fechaNacimiento;
         this.fechaIncorporacion = fechaIncorporacion;
         this.vendidos = vendidos;
-        this.isAdmin = isAdmin;
+        this.admin = isAdmin;
     }
 
     public String getUser() {
@@ -48,7 +48,7 @@ public class Vendedor {
         return name;
     }
 
-    public float getDni() {
+    public double getDni() {
         return dni;
     }
 
@@ -64,8 +64,8 @@ public class Vendedor {
         return vendidos;
     }
 
-    public boolean isIsAdmin() {
-        return isAdmin;
+    public boolean isAdmin() {
+        return admin;
     }
     
     

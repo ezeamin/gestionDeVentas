@@ -6,16 +6,10 @@
 package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import java.awt.Color;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,7 +22,7 @@ public class GUILogin extends javax.swing.JFrame {
      */
     DB data;
     String user,pass;
-    LoginLogic lo;
+    Logic lo;
     
     public GUILogin() {
         initComponents();
@@ -38,7 +32,7 @@ public class GUILogin extends javax.swing.JFrame {
         new Utilidades().scaleImage(logo);     
         
         data=new DB(false,"gestion","root",""); //modificar booleano
-        lo=new LoginLogic(data);
+        lo=new Logic(data);
         
         //acciones
         Action action = new AbstractAction(){ //para detectar el enter
@@ -211,12 +205,17 @@ public class GUILogin extends javax.swing.JFrame {
         user=txtUsuario.getText();
         pass=new String(txtContrasenia.getPassword());
         
+        if("".equals(user) || "".equals(pass)) return;
+        
         if(lo.login(user, pass, txtError,txtContrasenia)) dispose();
         
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void txtOlvContraseniaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtOlvContraseniaMouseClicked
         // TODO add your handling code here:
+        /*txtError.setText("Que lastima papá");
+        txtError.setVisible(true);*/
+        JOptionPane.showMessageDialog(null,"Que lastima papá");
     }//GEN-LAST:event_txtOlvContraseniaMouseClicked
 
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
@@ -228,29 +227,7 @@ public class GUILogin extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
