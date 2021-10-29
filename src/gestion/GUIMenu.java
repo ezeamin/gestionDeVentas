@@ -7,6 +7,8 @@ package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -62,13 +64,20 @@ public class GUIMenu extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         btnNuevaVenta = new javax.swing.JMenuItem();
-        btnNuevoProducto = new javax.swing.JMenuItem();
+        btnRegistro = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        btnAgregarProducto = new javax.swing.JMenuItem();
+        btnEliminarProducto = new javax.swing.JMenuItem();
+        btnRegistroProductos = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         btnNuevoVendedor = new javax.swing.JMenuItem();
         btnEliminarVendedor = new javax.swing.JMenuItem();
+        btnRegistroVendedores = new javax.swing.JMenuItem();
+        btnRegistroClientes = new javax.swing.JMenuItem();
         btnCerrarSesion = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Gestion de ventas");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Bienvenido, ");
@@ -89,10 +98,33 @@ public class GUIMenu extends javax.swing.JFrame {
         });
         jMenu1.add(btnNuevaVenta);
 
-        btnNuevoProducto.setText("Añadir producto");
-        jMenu1.add(btnNuevoProducto);
+        btnRegistro.setText("Registro de ventas");
+        btnRegistro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroActionPerformed(evt);
+            }
+        });
+        jMenu1.add(btnRegistro);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu3.setText("Productos");
+
+        btnAgregarProducto.setText("Añadir producto");
+        jMenu3.add(btnAgregarProducto);
+
+        btnEliminarProducto.setText("Eliminar producto");
+        jMenu3.add(btnEliminarProducto);
+
+        btnRegistroProductos.setText("Registro de productos");
+        btnRegistroProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroProductosActionPerformed(evt);
+            }
+        });
+        jMenu3.add(btnRegistroProductos);
+
+        jMenuBar1.add(jMenu3);
 
         jMenu2.setText("Configuracion");
 
@@ -112,6 +144,22 @@ public class GUIMenu extends javax.swing.JFrame {
         });
         jMenu2.add(btnEliminarVendedor);
 
+        btnRegistroVendedores.setText("Registro de vendedores");
+        btnRegistroVendedores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroVendedoresActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnRegistroVendedores);
+
+        btnRegistroClientes.setText("Registro de clientes");
+        btnRegistroClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroClientesActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnRegistroClientes);
+
         btnCerrarSesion.setText("Cerrar sesion");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,30 +176,30 @@ public class GUIMenu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(82, 82, 82)
+                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(488, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(458, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtNombre)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtApellido)
-                .addGap(64, 64, 64))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(82, 82, 82)
-                .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(30, 30, 30))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(81, Short.MAX_VALUE)
                 .addComponent(logo, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(68, 68, 68)
+                .addGap(62, 62, 62)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtNombre)
                     .addComponent(txtApellido))
-                .addGap(25, 25, 25))
+                .addGap(31, 31, 31))
         );
 
         pack();
@@ -174,22 +222,63 @@ public class GUIMenu extends javax.swing.JFrame {
 
     private void btnEliminarVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarVendedorActionPerformed
         // TODO add your handling code here:
-        new GUIEliminarVendedor(data).setVisible(true);
+        new GUIEliminarVendedor(data,vend.getDni()).setVisible(true);
     }//GEN-LAST:event_btnEliminarVendedorActionPerformed
+
+    private void btnRegistroVendedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroVendedoresActionPerformed
+        try {
+            new GUITable(data,"empleados").setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnRegistroVendedoresActionPerformed
+
+    private void btnRegistroClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroClientesActionPerformed
+        // TODO add your handling code here:
+        try {
+            new GUITable(data,"clientes").setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnRegistroClientesActionPerformed
+
+    private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
+        // TODO add your handling code here:
+        try {
+            new GUITable(data,"productos").setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnRegistroProductosActionPerformed
+
+    private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed
+        // TODO add your handling code here:
+        try {
+            new GUITable(data,"ventas").setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnRegistroActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem btnAgregarProducto;
     private javax.swing.JMenuItem btnCerrarSesion;
+    private javax.swing.JMenuItem btnEliminarProducto;
     private javax.swing.JMenuItem btnEliminarVendedor;
     private javax.swing.JMenuItem btnNuevaVenta;
-    private javax.swing.JMenuItem btnNuevoProducto;
     private javax.swing.JMenuItem btnNuevoVendedor;
+    private javax.swing.JMenuItem btnRegistro;
+    private javax.swing.JMenuItem btnRegistroClientes;
+    private javax.swing.JMenuItem btnRegistroProductos;
+    private javax.swing.JMenuItem btnRegistroVendedores;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel txtApellido;

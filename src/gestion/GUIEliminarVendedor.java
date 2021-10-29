@@ -6,6 +6,9 @@
 package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 /**
  *
@@ -17,14 +20,24 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
      * Creates new form GUIEliminarVendedor
      */
     Logic lo;
-    DB data;
+    double thisDNI;
     
-    public GUIEliminarVendedor(DB _data) {
+    public GUIEliminarVendedor(DB _data,double _thisDNI) {
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
        
         lo=new Logic(_data);
+        thisDNI=_thisDNI;
+        
+        Action action = new AbstractAction(){ //para detectar el enter
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                btnEliminarActionPerformed(e);
+            }
+        };
+        txtDni.addActionListener(action);
     }
 
     /**
@@ -94,7 +107,7 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-        if(lo.eliminarVendedor(txtDni.getText())) dispose();
+        if(lo.eliminarVendedor(txtDni.getText(),thisDNI)) dispose();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**

@@ -106,6 +106,7 @@ public class DB {
     public void createTableEmpleados(){
         try{
             String query="CREATE TABLE Empleados ("+
+                         "Num INT(4) AUTO_INCREMENT,"+
                          "Usuario VARCHAR(20),"+
                          "Password VARCHAR(20),"+
                          "Apellido VARCHAR(15),"+
@@ -114,7 +115,8 @@ public class DB {
                          "Nacimiento DATE,"+
                          "Incorporacion DATE,"+
                          "Ventas INT(3),"+
-                         "Admin INT(1))";
+                         "Admin INT(1),"+
+                         "PRIMARY KEY(Num))";
             Statement st=conexion.createStatement();
             st.executeUpdate(query);
             System.out.println("Se ha creado la tabla"+" empleados");
@@ -129,11 +131,13 @@ public class DB {
     public void createTableClientes(){
         try{
             String query="CREATE TABLE Clientes ("+
+                         "Num INT(4) AUTO_INCREMENT,"+
                          "Apellido VARCHAR(15),"+
                          "Nombre VARCHAR(15),"+
                          "DNI DOUBLE PRECISION,"+
                          "Direccion VARCHAR(20),"+
-                         "ProdComprados INT(3))";
+                         "ProdComprados INT(3),"+
+                         "PRIMARY KEY(Num))";
             Statement st=conexion.createStatement();
             st.executeUpdate(query);
             System.out.println("Se ha creado la tabla"+" clientes");
@@ -146,10 +150,12 @@ public class DB {
     public void createTableProductos(){
         try{
             String query="CREATE TABLE Productos ("+
+                         "Num INT(4) AUTO_INCREMENT,"+
                          "ID INT(4),"+
                          "Nombre VARCHAR(15),"+
                          "Precio FLOAT(8),"+
-                         "Existencia INT(3))";
+                         "Existencia INT(3),"+
+                         "PRIMARY KEY(num))";
             Statement st=conexion.createStatement();
             st.executeUpdate(query);
             System.out.println("Se ha creado la tabla"+" productos");
@@ -213,7 +219,7 @@ public class DB {
                 return false;
             }
             
-            String query="INSERT INTO "+table+" VALUES("+
+            String query="INSERT INTO "+table+"(usuario,password,apellido,nombre,dni,nacimiento,incorporacion,ventas,admin) VALUES("+
                         _user+","+
                         _pass+","+
                         lastname+","+
@@ -243,7 +249,7 @@ public class DB {
         try{
             if(conectar) MySQLConnection();
             
-            String query="INSERT INTO "+table+" VALUES("+
+            String query="INSERT INTO "+table+"(apellido,nombre,dni,direccion,prodcomprados) VALUES("+
                         lastname+","+
                         name+","+
                         dni+","+
@@ -265,7 +271,7 @@ public class DB {
         try{
             if(conectar) MySQLConnection();
             
-            String query="INSERT INTO "+table+" VALUES("+
+            String query="INSERT INTO "+table+"(id,nombre,precio,existencia) VALUES("+
                         id+","+
                         name+","+
                         price+","+
@@ -302,29 +308,26 @@ public class DB {
         }
     }
     
-    public boolean login(String _user,String _pass) throws SQLException{
-        boolean ret=false;
+    public String login(String _user,String _pass) throws SQLException{
+        String pass;
         try{
             MySQLConnection();
-            String pass="";
+            pass="";
 
             String query="SELECT password FROM empleados WHERE usuario='"+_user+"'";
             Statement st=conexion.createStatement();
             ResultSet rs=st.executeQuery(query);
 
             if (rs.next()) pass=rs.getString("password");
-
-            if(_pass.equals(pass)) ret=true;
-
+            
             MySQLCloseConnection();
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
-            return false;
+            return null; //error de conexion
         }
         
-        
-        return ret;
+        return pass;
     }
     
     public Vendedor createObjectVendedor(String _user) throws SQLException{
@@ -385,5 +388,82 @@ public class DB {
         }
         
         return false;
+    }
+    
+    public ResultSetMetaData getColumnNames(String table){
+        ResultSet rs;
+        ResultSetMetaData meta;
+        try{
+            MySQLConnection();
+
+            String query="SELECT * FROM "+table+" WHERE num=0";
+            Statement st=conexion.createStatement();
+            rs=st.executeQuery(query);
+            
+            meta=rs.getMetaData(); 
+
+            MySQLCloseConnection();
+            return meta;
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return null;
+    }
+    
+    public int getRowCount(String table){
+        int rows=0;
+        try{
+            MySQLConnection();
+
+            String query="SELECT COUNT(*) FROM "+table;
+            Statement st=conexion.createStatement();
+            ResultSet rs=st.executeQuery(query);
+            
+            if(rs.next()) rows=rs.getInt(1);
+            //System.out.println("r="+rows);
+            
+            MySQLCloseConnection();
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return rows;
+    }
+    
+    public String[] getRow(String table,int i) throws SQLException{
+        ResultSet rs;
+        ResultSetMetaData meta;
+        String info[];
+        try{
+            MySQLConnection();
+
+            String query="SELECT * FROM "+table+" WHERE num="+Integer.toString(i);
+            //System.out.println(""+query);
+            Statement st=conexion.createStatement();
+            rs=st.executeQuery(query);
+            
+            meta=rs.getMetaData();
+            int cant=meta.getColumnCount();
+            
+            info=new String[cant];
+            
+            if(rs.next()){
+                for(int j=0;j<cant;j++){
+                    info[j]=rs.getString(j+1);
+                } 
+            }
+            
+            MySQLCloseConnection();
+            
+            return info;
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return null;
     }
 }

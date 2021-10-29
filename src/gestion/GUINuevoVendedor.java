@@ -6,6 +6,9 @@
 package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 /**
  *
@@ -27,6 +30,22 @@ public class GUINuevoVendedor extends javax.swing.JFrame {
         setLocationRelativeTo(null);
        
         lo=new Logic(_data);
+        
+        Action action = new AbstractAction(){ //para detectar el enter
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                btnEnviarActionPerformed(e);
+            }
+        };
+        txtApellido.addActionListener(action);
+        txtNombre.addActionListener(action);
+        txtDiaNac.addActionListener(action);
+        txtMesNac.addActionListener(action);
+        txtAnioNac.addActionListener(action);
+        txtUsuario.addActionListener(action);
+        txtContrasenia.addActionListener(action);
+        txtRepetirContrasenia.addActionListener(action);
     }
 
     /**

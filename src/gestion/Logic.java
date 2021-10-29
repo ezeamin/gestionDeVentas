@@ -6,6 +6,7 @@
 package gestion;
 
 import java.sql.SQLException;
+import java.sql.ResultSetMetaData;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
@@ -26,19 +27,25 @@ public class Logic {
     }
     
     public boolean login(String user,String pass,JLabel txtError,JTextField txtContrasenia){
+        if("".equals(user) || "".equals(pass)) return false;
+        
         try {
-            if(data.login(user,pass)){
+            String SQLPass=data.login(user,pass);
+            
+            if(SQLPass==null){
+                txtError.setVisible(true);
+                txtError.setText("Error de conexion. Pruebe nuevamente");
+                return false;
+            }
+            
+            if(SQLPass.equals(pass)){
                 new GUIMenu(user,data).setVisible(true);
                 return true;
             }
             else{
                 txtError.setVisible(true);
-                
-                if(!data.MySQLConnection()) txtError.setText("Error de conexion. Pruebe nuevamente"); //si no conecta, error
-                else {
-                    txtError.setText("Usuario o contraseña incorrecta");
-                    txtContrasenia.setText("");
-                }
+                txtError.setText("Usuario o contraseña incorrecta");
+                txtContrasenia.setText("");
                 txtContrasenia.grabFocus();
                 
                 return false;
@@ -79,6 +86,14 @@ public class Logic {
         return false;
     }
     
+    private boolean tienePunto(String str){
+        for(int i=0;i<str.length();i++){
+            if(!Character.isDigit(str.charAt(i))) return true;
+        }
+        
+        return false;
+    }
+    
     public boolean nuevoVendedor(String _txtNombre,String _txtApellido,String _txtDNI,String _txtDiaNac,String _txtMesNac,String _txtAnioNac,String _txtUsuario,String _txtContrasenia,String _txtRepetirContrasenia, boolean isAdmin){
         float DNI;
         int dia=0,mes=0,anio=0;
@@ -98,6 +113,11 @@ public class Logic {
         }
         
         //dni
+        if(tienePunto(_txtDNI)){
+            JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
         try{
             DNI=Float.parseFloat(_txtDNI);
         }
@@ -160,8 +180,13 @@ public class Logic {
         return false;
     }
     
-    public boolean eliminarVendedor(String _txtDNI){
+    public boolean eliminarVendedor(String _txtDNI,double thisDNI){
         float DNI;
+     
+        if(tienePunto(_txtDNI)){
+            JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         
         try{
             DNI=Float.parseFloat(_txtDNI); //un punto lo toma correcto
@@ -176,6 +201,15 @@ public class Logic {
             return false;
         }
         
+        if (DNI==11111111){
+            JOptionPane.showMessageDialog(null, "No se puede eliminar este usuario","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        else if (DNI==thisDNI){
+            JOptionPane.showMessageDialog(null, "No puedes eliminar el usuario actual","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
         if(!data.eraseLine("empleados",DNI)){
             JOptionPane.showMessageDialog(null, "Vendedor no encontrado","Atencion",JOptionPane.WARNING_MESSAGE);
             return false;
@@ -184,5 +218,18 @@ public class Logic {
             JOptionPane.showMessageDialog(null, "Vendedor eliminado");
             return true;
         }
+    }
+    
+    public String[] getColumnNames(String table) throws SQLException{
+        ResultSetMetaData meta=data.getColumnNames(table);
+        Integer cantColumnas = meta.getColumnCount();
+        
+        String[] names=new String[cantColumnas];
+
+        for(int i=1;i<=cantColumnas;i++){
+           names[i-1] = meta.getColumnLabel(i);
+        }
+      
+        return names;
     }
 }

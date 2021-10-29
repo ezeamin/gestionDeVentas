@@ -23,6 +23,7 @@ public class GUILogin extends javax.swing.JFrame {
     DB data;
     String user,pass;
     Logic lo;
+    int cont; //para texto error
     
     public GUILogin() {
         initComponents();
@@ -33,6 +34,7 @@ public class GUILogin extends javax.swing.JFrame {
         
         data=new DB(false,"gestion","root",""); //modificar booleano
         lo=new Logic(data);
+        cont=0;
         
         //acciones
         Action action = new AbstractAction(){ //para detectar el enter
@@ -92,12 +94,6 @@ public class GUILogin extends javax.swing.JFrame {
 
         jLabel4.setText("Contraseña");
 
-        txtUsuario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtUsuarioActionPerformed(evt);
-            }
-        });
-
         txtOlvContrasenia.setText("¿Olvidó su contraseña?");
         txtOlvContrasenia.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -110,6 +106,12 @@ public class GUILogin extends javax.swing.JFrame {
         btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnviarActionPerformed(evt);
+            }
+        });
+
+        txtContrasenia.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtContraseniaKeyTyped(evt);
             }
         });
 
@@ -156,9 +158,9 @@ public class GUILogin extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(txtContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15)
                 .addComponent(txtOlvContrasenia)
                 .addGap(18, 18, 18)
@@ -205,23 +207,21 @@ public class GUILogin extends javax.swing.JFrame {
         user=txtUsuario.getText();
         pass=new String(txtContrasenia.getPassword());
         
-        if("".equals(user) || "".equals(pass)) return;
-        
         if(lo.login(user, pass, txtError,txtContrasenia)) dispose();
-        
+        else cont=0; //para texto error
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void txtOlvContraseniaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtOlvContraseniaMouseClicked
         // TODO add your handling code here:
-        /*txtError.setText("Que lastima papá");
-        txtError.setVisible(true);*/
         JOptionPane.showMessageDialog(null,"Que lastima papá");
     }//GEN-LAST:event_txtOlvContraseniaMouseClicked
 
-    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
+    private void txtContraseniaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContraseniaKeyTyped
         // TODO add your handling code here:
-        txtError.setVisible(false); //hacer andar
-    }//GEN-LAST:event_txtUsuarioActionPerformed
+        
+        if(cont==1) txtError.setVisible(false); //hacer andar
+        cont++;
+    }//GEN-LAST:event_txtContraseniaKeyTyped
 
     /**
      * @param args the command line arguments
