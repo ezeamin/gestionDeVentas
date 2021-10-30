@@ -30,9 +30,11 @@ public class GUILogin extends javax.swing.JFrame {
         FlatLightLaf.setup();
         txtError.setVisible(false);
         setLocationRelativeTo(null);
-        new Utilidades().scaleImage(logo);     
+        new Utilidades().scaleImage(logo); 
         
-        data=new DB(false,"gestion","root",""); //modificar booleano
+        boolean reset=false;
+        
+        data=new DB(reset,"gestion","root",""); //modificar booleano
         lo=new Logic(data);
         cont=0;
         

@@ -183,8 +183,7 @@ public class DB {
         }
     }
     
-    public boolean checkExistance(boolean conectar,String table,double dni){
-        
+    private boolean checkExistance(boolean conectar,String table,double dni){
         try{
             if(conectar) MySQLConnection();
         
@@ -208,6 +207,66 @@ public class DB {
         return false;
     }
     
+    private boolean checkExistance(boolean conectar,String table,String user){
+        try{
+            if(conectar) MySQLConnection();
+        
+            String query="SELECT usuario FROM "+table;
+            Statement st=conexion.createStatement();
+            ResultSet rs=st.executeQuery(query);
+
+            while (rs.next()) {
+                if(user.equals(rs.getString("usuario"))){
+                    if(conectar) MySQLCloseConnection();
+                    return true;
+                }
+            }
+            
+            if(conectar) MySQLCloseConnection();
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+    
+        return false;
+    }
+    
+    private int getAutoIncrement(String table) throws SQLException{
+        int inc=0;
+        
+        String query="SELECT num FROM "+table;
+        Statement st=conexion.createStatement();
+        ResultSet rs=st.executeQuery(query);
+        while(rs.next()){
+            inc=rs.getInt(1);
+        }
+            
+        return inc;
+            
+    }
+    
+    private void resetAutoIncrement(String table) throws SQLException{
+        int count=0;
+        
+        String query="SELECT count(*) FROM "+table;
+        Statement st=conexion.createStatement();
+        ResultSet rs=st.executeQuery(query);
+        if(rs.next()) count=rs.getInt(1);
+            
+        if(count==0){
+            query="ALTER TABLE "+table+" AUTO_INCREMENT=1";
+            st=conexion.createStatement();
+            st.executeUpdate(query);
+        }
+        else{
+            int inc=getAutoIncrement(table)+1; //+1 porque es el siguiente
+            query="ALTER TABLE "+table+" AUTO_INCREMENT="+Integer.toString(inc);
+            st=conexion.createStatement();
+            st.executeUpdate(query);
+        }
+            
+    }
+    
     //empleados
     public boolean newLine(boolean conectar,String table,String _user,String _pass,String lastname,String name,double dni,String birthDate,String firstDate,int sold,int admin){
         try{
@@ -218,6 +277,13 @@ public class DB {
                 if(conectar) MySQLCloseConnection();
                 return false;
             }
+            else if(checkExistance(false,table,_user)){
+                JOptionPane.showMessageDialog(null, "Ya existe un usuario con este nombre de usuario","Atencion",JOptionPane.WARNING_MESSAGE);
+                if(conectar) MySQLCloseConnection();
+                return false;
+            }
+            
+            resetAutoIncrement(table);
             
             String query="INSERT INTO "+table+"(usuario,password,apellido,nombre,dni,nacimiento,incorporacion,ventas,admin) VALUES("+
                         _user+","+
@@ -245,9 +311,17 @@ public class DB {
     }
     
     //cliente
-    public void newLine(boolean conectar,String table,String lastname,String name,double dni,String address,int bought){
+    public boolean newLine(boolean conectar,String table,String lastname,String name,double dni,String address,int number,int bought){
         try{
             if(conectar) MySQLConnection();
+            
+            if(checkExistance(false,table,dni)){
+                JOptionPane.showMessageDialog(null, "Ya existe un usuario con este DNI","Atencion",JOptionPane.WARNING_MESSAGE);
+                if(conectar) MySQLCloseConnection();
+                return false;
+            }
+            
+            resetAutoIncrement(table);
             
             String query="INSERT INTO "+table+"(apellido,nombre,dni,direccion,prodcomprados) VALUES("+
                         lastname+","+
@@ -260,16 +334,22 @@ public class DB {
             
             System.out.println("Se cargó la linea en la tabla "+table);
             if(conectar) MySQLCloseConnection();
+            
+            return true;
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
+        
+        return false;
     }
     
     //producto
     public void newLine(boolean conectar,String table,int id,String name,float price,int existance){
         try{
             if(conectar) MySQLConnection();
+            
+            resetAutoIncrement(table);
             
             String query="INSERT INTO "+table+"(id,nombre,precio,existencia) VALUES("+
                         id+","+
@@ -291,6 +371,8 @@ public class DB {
     public void newLine(boolean conectar,String table,String date,String seller, String client,float price){
         try{
             if(conectar) MySQLConnection();
+            
+            resetAutoIncrement(table);
             
             String query="INSERT INTO "+table+"(Fecha,Vendedor,Cliente,Importe) VALUES("+
                         date+","+

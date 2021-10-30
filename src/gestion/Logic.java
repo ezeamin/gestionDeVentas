@@ -18,6 +18,9 @@ import javax.swing.JTextField;
 /**
  *
  * @author EZEA2
+ * 
+ * Actualizar cant de productos comprados y vendidos en clientes y empleados
+ * 
  */
 public class Logic {
     DB data;
@@ -68,8 +71,8 @@ public class Logic {
         String diaAct=dtfDia.format(LocalDateTime.now());
         
         if(anio>Integer.parseInt(anioAct) || anio<1900) return true;
-        if(mes>Integer.parseInt(mesAct) || mes<1) return true;
-        if(dia>Integer.parseInt(diaAct) || dia<1) return true;
+        if((anio==Integer.parseInt(anioAct) && mes>Integer.parseInt(mesAct)) || mes>12 || mes<1) return true; //check que da error
+        if((anio==Integer.parseInt(anioAct) && mes==Integer.parseInt(mesAct) && dia>Integer.parseInt(diaAct))|| dia>31 || dia<1) return true;
         
         if(dia==31 && (mes==2 || mes==4 || mes==6 || mes==9 || mes==11)) return true;
         if(dia==30 && mes==2) return true;
@@ -94,6 +97,54 @@ public class Logic {
         return false;
     }
     
+    public boolean nuevoCliente(String _txtNombre,String _txtApellido,String _txtDNI,String _txtDireccion,String _txtNum){
+        float DNI;
+        int num;
+
+        //COMPROBACIONES
+        
+        //numero
+        try{
+            num=Integer.parseInt(_txtNum);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Direccion no valida. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        //campos vacios
+        if("".equals(_txtApellido) || "".equals(_txtNombre) || "".equals(_txtDireccion) || "".equals(_txtDNI)){
+            JOptionPane.showMessageDialog(null, "Complete todos los campos","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        //dni
+        if(incorrectDNI(_txtDNI)) return false;
+        else DNI=Float.parseFloat(_txtDNI);
+        
+        //nombre y apellido
+        if(incorrectString(_txtNombre) || incorrectString(_txtApellido)){
+            JOptionPane.showMessageDialog(null, "Nombre y/o apellido no valido(s)","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        //FIN COMPROBACIONES
+        
+        _txtApellido=Character.toUpperCase(_txtApellido.charAt(0))+(_txtApellido.toLowerCase()).substring(1);
+        String txtApellido="'"+_txtApellido+"'";
+        _txtNombre=Character.toUpperCase(_txtNombre.charAt(0))+(_txtNombre.toLowerCase()).substring(1);
+        String txtNombre="'"+_txtNombre+"'";
+        _txtDireccion=Character.toUpperCase(_txtDireccion.charAt(0))+(_txtDireccion.toLowerCase()).substring(1)+" "+Integer.parseInt(_txtNum);
+        String txtDireccion="'"+_txtDireccion+"'";
+        
+        if(data.newLine(true,"clientes",txtApellido,txtNombre,DNI,txtDireccion,num,0)) {
+            JOptionPane.showMessageDialog(null, "Usuario creado exitosamente");
+            return true;
+        }
+        
+        return false;
+    }
+    
     public boolean nuevoVendedor(String _txtNombre,String _txtApellido,String _txtDNI,String _txtDiaNac,String _txtMesNac,String _txtAnioNac,String _txtUsuario,String _txtContrasenia,String _txtRepetirContrasenia, boolean isAdmin){
         float DNI;
         int dia=0,mes=0,anio=0;
@@ -113,23 +164,8 @@ public class Logic {
         }
         
         //dni
-        if(tienePunto(_txtDNI)){
-            JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        
-        try{
-            DNI=Float.parseFloat(_txtDNI);
-        }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        
-        if(_txtDNI.length()>8 || _txtDNI.length()<7){
-            JOptionPane.showMessageDialog(null, "DNI no valido","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
+        if(incorrectDNI(_txtDNI)) return false;
+        else DNI=Float.parseFloat(_txtDNI); 
         
         //fecha
         try{
@@ -180,12 +216,40 @@ public class Logic {
         return false;
     }
     
-    public boolean eliminarVendedor(String _txtDNI,double thisDNI){
+    private boolean eliminar(String table,double DNI){
+        String txt="";
+        
+        switch(table){
+            case "empleados":{
+                txt="Vendedor";
+                break;
+            }
+            case "clientes":{
+                txt="Cliente";
+                break;
+            }
+            case "productos":{
+                txt="Producto";
+                break;
+            }
+        }
+        
+        if(!data.eraseLine(table,DNI)){
+            JOptionPane.showMessageDialog(null, txt+" no encontrado","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        else {
+            JOptionPane.showMessageDialog(null, txt+" eliminado");
+            return true;
+        }
+    }
+    
+    private boolean incorrectDNI(String _txtDNI){
         float DNI;
      
         if(tienePunto(_txtDNI)){
             JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
+            return true;
         }
         
         try{
@@ -193,13 +257,22 @@ public class Logic {
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
+            return true;
         }
         
         if(_txtDNI.length()>8 || _txtDNI.length()<7){
             JOptionPane.showMessageDialog(null, "DNI no valido","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
+            return true;
         }
+        
+        return false;
+    }
+    
+    public boolean eliminarVendedor(String _txtDNI,double thisDNI){
+        float DNI;
+        
+        if(incorrectDNI(_txtDNI)) return false;
+        else DNI=Float.parseFloat(_txtDNI);
         
         if (DNI==11111111){
             JOptionPane.showMessageDialog(null, "No se puede eliminar este usuario","Atencion",JOptionPane.WARNING_MESSAGE);
@@ -210,14 +283,16 @@ public class Logic {
             return false;
         }
         
-        if(!data.eraseLine("empleados",DNI)){
-            JOptionPane.showMessageDialog(null, "Vendedor no encontrado","Atencion",JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        else {
-            JOptionPane.showMessageDialog(null, "Vendedor eliminado");
-            return true;
-        }
+        return eliminar("empleados",DNI);
+    }
+    
+    public boolean eliminarCliente(String _txtDNI){
+        float DNI;
+     
+        if(incorrectDNI(_txtDNI)) return false;
+        else DNI=Float.parseFloat(_txtDNI);
+        
+        return eliminar("clientes",DNI);
     }
     
     public String[] getColumnNames(String table) throws SQLException{

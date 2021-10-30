@@ -14,21 +14,49 @@ import javax.swing.Action;
  *
  * @author EZEA2
  */
-public class GUIEliminarVendedor extends javax.swing.JFrame {
+public class GUIEliminarDato extends javax.swing.JFrame {
 
     /**
      * Creates new form GUIEliminarVendedor
      */
     Logic lo;
+    String table;
     double thisDNI;
     
-    public GUIEliminarVendedor(DB _data,double _thisDNI) {
+    public GUIEliminarDato(DB _data,String _table,double _thisDNI) {
+        thisDNI=_thisDNI;
+        init(_data,_table);
+    }
+    
+    public GUIEliminarDato(DB _data,String _table) {
+        init(_data,_table);
+    }
+    
+    private void init(DB _data,String _table){
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
        
         lo=new Logic(_data);
-        thisDNI=_thisDNI;
+        table=_table;
+        
+        switch(table){
+            case "empleados":{
+                txtObjeto.setText("vendedor");
+                txtEntradaLabel.setText("DNI:");
+                break;
+            }
+            case "clientes":{
+                txtObjeto.setText("cliente");
+                txtEntradaLabel.setText("DNI:");
+                break;
+            }
+            case "productos":{
+                txtObjeto.setText("producto");
+                txtEntradaLabel.setText("ID:");
+                break;
+            }
+        }
         
         Action action = new AbstractAction(){ //para detectar el enter
             @Override
@@ -37,7 +65,7 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
                 btnEliminarActionPerformed(e);
             }
         };
-        txtDni.addActionListener(action);
+        txtEntrada.addActionListener(action);
     }
 
     /**
@@ -50,16 +78,17 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtDni = new javax.swing.JTextField();
+        txtEntradaLabel = new javax.swing.JLabel();
+        txtEntrada = new javax.swing.JTextField();
         btnEliminar = new javax.swing.JButton();
+        txtObjeto = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("Eliminar vendedor");
+        jLabel1.setText("Eliminar");
 
-        jLabel2.setText("DNI:");
+        txtEntradaLabel.setText("DNI:");
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -67,6 +96,9 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
                 btnEliminarActionPerformed(evt);
             }
         });
+
+        txtObjeto.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        txtObjeto.setText("Objeto");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -76,27 +108,31 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(89, 89, 89)
-                        .addComponent(jLabel2)
+                        .addComponent(txtEntradaLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDni, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(btnEliminar)
                                 .addGap(27, 27, 27))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
-                        .addComponent(jLabel1)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtObjeto)))
                 .addContainerGap(87, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtObjeto))
                 .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEntradaLabel)
+                    .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addComponent(btnEliminar)
                 .addContainerGap(49, Short.MAX_VALUE))
@@ -107,7 +143,21 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-        if(lo.eliminarVendedor(txtDni.getText(),thisDNI)) dispose();
+        switch(table){
+            case "empleados":{
+                if(lo.eliminarVendedor(txtEntrada.getText(),thisDNI)) dispose();
+                break;
+            }
+            case "clientes":{
+                if(lo.eliminarCliente(txtEntrada.getText())) dispose();
+                break;
+            }
+            case "productos":{
+                //if(lo.eliminarProducto(txtEntrada.getText(),thisDNI)) dispose();
+                break;
+            }
+        }
+        
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
@@ -117,7 +167,8 @@ public class GUIEliminarVendedor extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField txtDni;
+    private javax.swing.JTextField txtEntrada;
+    private javax.swing.JLabel txtEntradaLabel;
+    private javax.swing.JLabel txtObjeto;
     // End of variables declaration//GEN-END:variables
 }

@@ -74,6 +74,8 @@ public class GUIMenu extends javax.swing.JFrame {
         btnEliminarVendedor = new javax.swing.JMenuItem();
         btnRegistroVendedores = new javax.swing.JMenuItem();
         btnRegistroClientes = new javax.swing.JMenuItem();
+        btnNuevoCliente = new javax.swing.JMenuItem();
+        btnEliminarCliente = new javax.swing.JMenuItem();
         btnCerrarSesion = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -160,6 +162,22 @@ public class GUIMenu extends javax.swing.JFrame {
         });
         jMenu2.add(btnRegistroClientes);
 
+        btnNuevoCliente.setText("Nuevo cliente (temp)");
+        btnNuevoCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoClienteActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnNuevoCliente);
+
+        btnEliminarCliente.setText("Eliminar cliente");
+        btnEliminarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarClienteActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnEliminarCliente);
+
         btnCerrarSesion.setText("Cerrar sesion");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -222,7 +240,7 @@ public class GUIMenu extends javax.swing.JFrame {
 
     private void btnEliminarVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarVendedorActionPerformed
         // TODO add your handling code here:
-        new GUIEliminarVendedor(data,vend.getDni()).setVisible(true);
+        new GUIEliminarDato(data,"empleados",vend.getDni()).setVisible(true);
     }//GEN-LAST:event_btnEliminarVendedorActionPerformed
 
     private void btnRegistroVendedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroVendedoresActionPerformed
@@ -260,6 +278,16 @@ public class GUIMenu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRegistroActionPerformed
 
+    private void btnNuevoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoClienteActionPerformed
+        // TODO add your handling code here:
+        new GUINuevoCliente(data).setVisible(true);
+    }//GEN-LAST:event_btnNuevoClienteActionPerformed
+
+    private void btnEliminarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarClienteActionPerformed
+        // TODO add your handling code here:
+        new GUIEliminarDato(data,"clientes").setVisible(true);
+    }//GEN-LAST:event_btnEliminarClienteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -267,9 +295,11 @@ public class GUIMenu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnAgregarProducto;
     private javax.swing.JMenuItem btnCerrarSesion;
+    private javax.swing.JMenuItem btnEliminarCliente;
     private javax.swing.JMenuItem btnEliminarProducto;
     private javax.swing.JMenuItem btnEliminarVendedor;
     private javax.swing.JMenuItem btnNuevaVenta;
+    private javax.swing.JMenuItem btnNuevoCliente;
     private javax.swing.JMenuItem btnNuevoVendedor;
     private javax.swing.JMenuItem btnRegistro;
     private javax.swing.JMenuItem btnRegistroClientes;
