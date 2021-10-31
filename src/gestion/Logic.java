@@ -98,7 +98,7 @@ public class Logic {
     }
     
     public boolean nuevoCliente(String _txtNombre,String _txtApellido,String _txtDNI,String _txtDireccion,String _txtNum){
-        float DNI;
+        long DNI;
         int num;
 
         //COMPROBACIONES
@@ -120,7 +120,7 @@ public class Logic {
 
         //dni
         if(incorrectDNI(_txtDNI)) return false;
-        else DNI=Float.parseFloat(_txtDNI);
+        else DNI=Long.parseLong(_txtDNI);
         
         //nombre y apellido
         if(incorrectString(_txtNombre) || incorrectString(_txtApellido)){
@@ -146,7 +146,7 @@ public class Logic {
     }
     
     public boolean nuevoVendedor(String _txtNombre,String _txtApellido,String _txtDNI,String _txtDiaNac,String _txtMesNac,String _txtAnioNac,String _txtUsuario,String _txtContrasenia,String _txtRepetirContrasenia, boolean isAdmin){
-        float DNI;
+        long DNI;
         int dia=0,mes=0,anio=0;
 
         //COMPROBACIONES
@@ -165,7 +165,7 @@ public class Logic {
         
         //dni
         if(incorrectDNI(_txtDNI)) return false;
-        else DNI=Float.parseFloat(_txtDNI); 
+        else DNI=Long.parseLong(_txtDNI); 
         
         //fecha
         try{
@@ -216,7 +216,7 @@ public class Logic {
         return false;
     }
     
-    private boolean eliminar(String table,double DNI){
+    private boolean eliminar(String table,long DNI){
         String txt="";
         
         switch(table){
@@ -245,7 +245,7 @@ public class Logic {
     }
     
     private boolean incorrectDNI(String _txtDNI){
-        float DNI;
+        long DNI;
      
         if(tienePunto(_txtDNI)){
             JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
@@ -253,7 +253,7 @@ public class Logic {
         }
         
         try{
-            DNI=Float.parseFloat(_txtDNI); //un punto lo toma correcto
+            DNI=Long.parseLong(_txtDNI); //un punto lo toma correcto
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, "DNI no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
@@ -268,13 +268,13 @@ public class Logic {
         return false;
     }
     
-    public boolean eliminarVendedor(String _txtDNI,double thisDNI){
-        float DNI;
+    public boolean eliminarVendedor(String _txtDNI,long thisDNI){
+        long DNI;
         
         if(incorrectDNI(_txtDNI)) return false;
-        else DNI=Float.parseFloat(_txtDNI);
+        else DNI=Long.parseLong(_txtDNI);
         
-        if (DNI==11111111){
+        if (DNI==1){
             JOptionPane.showMessageDialog(null, "No se puede eliminar este usuario","Atencion",JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -287,10 +287,10 @@ public class Logic {
     }
     
     public boolean eliminarCliente(String _txtDNI){
-        float DNI;
+        long DNI;
      
         if(incorrectDNI(_txtDNI)) return false;
-        else DNI=Float.parseFloat(_txtDNI);
+        else DNI=Long.parseLong(_txtDNI);
         
         return eliminar("clientes",DNI);
     }

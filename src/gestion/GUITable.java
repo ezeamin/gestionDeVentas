@@ -37,9 +37,10 @@ public class GUITable extends javax.swing.JFrame {
         
         tabla=new DefaultTableModel();
         String names[]=lo.getColumnNames(strTabla);
-        length=names.length; //??
+        length=names.length;
         
         for(int i=0;i<length;i++){
+            if(strTabla.equals("empleados") && (i==1 || i==2)) continue; //escondo user y password
             tabla.addColumn(names[i]);
         }
         table.setModel(tabla);

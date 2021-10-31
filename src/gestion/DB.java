@@ -60,6 +60,8 @@ public class DB {
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error creando base de datos","Atencion",JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
         }
     }
     
@@ -111,7 +113,7 @@ public class DB {
                          "Password VARCHAR(20),"+
                          "Apellido VARCHAR(15),"+
                          "Nombre VARCHAR(15),"+
-                         "DNI DOUBLE PRECISION,"+
+                         "DNI LONG,"+
                          "Nacimiento DATE,"+
                          "Incorporacion DATE,"+
                          "Ventas INT(3),"+
@@ -121,10 +123,12 @@ public class DB {
             st.executeUpdate(query);
             System.out.println("Se ha creado la tabla"+" empleados");
             
-            newLine(false,"empleados","'admin'","'admin'","'admin'","'admin'",11111111,"'1111-11-11'","'1111-11-11'",0,1);
+            newLine(false,"empleados","'admin'","'admin'","'admin'","'admin'",1,"'1111-11-11'","'1111-11-11'",0,1);
         }
         catch(Exception e){
             System.out.println("Error al crear tabla"+" empleados: "+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al crear tabla empleados","Atencion",JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
         }
     }
     
@@ -134,7 +138,7 @@ public class DB {
                          "Num INT(4) AUTO_INCREMENT,"+
                          "Apellido VARCHAR(15),"+
                          "Nombre VARCHAR(15),"+
-                         "DNI DOUBLE PRECISION,"+
+                         "DNI LONG,"+
                          "Direccion VARCHAR(20),"+
                          "ProdComprados INT(3),"+
                          "PRIMARY KEY(Num))";
@@ -144,6 +148,8 @@ public class DB {
         }
         catch(Exception e){
             System.out.println("Error al crear tabla"+" clientes: "+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al crear tabla clientes","Atencion",JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
         }
     }
     
@@ -162,6 +168,8 @@ public class DB {
         }
         catch(Exception e){
             System.out.println("Error al crear tabla"+" productos: "+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al crear tabla productos","Atencion",JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
         }
     }
     
@@ -180,10 +188,12 @@ public class DB {
         }
         catch(Exception e){
             System.out.println("Error al crear tabla"+" ventas: "+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al crear tabla ventas","Atencion",JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
         }
     }
     
-    private boolean checkExistance(boolean conectar,String table,double dni){
+    private boolean checkExistance(boolean conectar,String table,long dni){
         try{
             if(conectar) MySQLConnection();
         
@@ -192,7 +202,7 @@ public class DB {
             ResultSet rs=st.executeQuery(query);
 
             while (rs.next()) {
-                if(dni==rs.getFloat("dni")){
+                if(dni==rs.getLong("dni")){
                     if(conectar) MySQLCloseConnection();
                     return true;
                 }
@@ -268,7 +278,7 @@ public class DB {
     }
     
     //empleados
-    public boolean newLine(boolean conectar,String table,String _user,String _pass,String lastname,String name,double dni,String birthDate,String firstDate,int sold,int admin){
+    public boolean newLine(boolean conectar,String table,String _user,String _pass,String lastname,String name,long dni,String birthDate,String firstDate,int sold,int admin){
         try{
             if(conectar) MySQLConnection();
             
@@ -311,7 +321,7 @@ public class DB {
     }
     
     //cliente
-    public boolean newLine(boolean conectar,String table,String lastname,String name,double dni,String address,int number,int bought){
+    public boolean newLine(boolean conectar,String table,String lastname,String name,long dni,String address,int number,int bought){
         try{
             if(conectar) MySQLConnection();
             
@@ -421,7 +431,7 @@ public class DB {
             ResultSet rs=st.executeQuery(query);
             
             String user,pass,lastname,name,nacimiento,incorporacion;
-            double dni;
+            long dni;
             int ventas;
             boolean isAdmin=false;
             Vendedor vend = null;
@@ -431,7 +441,7 @@ public class DB {
                 pass=rs.getString("password");
                 lastname=rs.getString("apellido");
                 name=rs.getString("nombre");
-                dni=rs.getDouble("dni");
+                dni=rs.getLong("dni");
                 nacimiento=rs.getString("nacimiento");
                 incorporacion=rs.getString("incorporacion");
                 ventas=rs.getInt("ventas");
@@ -452,13 +462,13 @@ public class DB {
         return null;
     }
     
-    public boolean eraseLine(String table,double dni){
+    public boolean eraseLine(String table,long dni){
         boolean conn=false;
         
         try{
             MySQLConnection();
 
-            String query="DELETE FROM "+table+" WHERE dni="+Double.toString(dni);
+            String query="DELETE FROM "+table+" WHERE dni="+Long.toString(dni);
             Statement st=conexion.createStatement();
             if(st.executeUpdate(query)!=0) conn=true; //si ==0 significa que no encontró el usuario
             
@@ -504,7 +514,6 @@ public class DB {
             ResultSet rs=st.executeQuery(query);
             
             if(rs.next()) rows=rs.getInt(1);
-            //System.out.println("r="+rows);
             
             MySQLCloseConnection();
         }
@@ -523,7 +532,6 @@ public class DB {
             MySQLConnection();
 
             String query="SELECT * FROM "+table+" WHERE num="+Integer.toString(i);
-            //System.out.println(""+query);
             Statement st=conexion.createStatement();
             rs=st.executeQuery(query);
             

@@ -34,7 +34,7 @@ public class GUILogin extends javax.swing.JFrame {
         
         boolean reset=false;
         
-        data=new DB(reset,"gestion","root",""); //modificar booleano
+        data=new DB(reset,"gestion","root",""); 
         lo=new Logic(data);
         cont=0;
         

@@ -14,13 +14,13 @@ public class Vendedor {
     private String password;
     private String lastname;
     private String name;
-    private double dni;
+    private long dni;
     private String fechaNacimiento;
     private String fechaIncorporacion;
     private int vendidos;
     private boolean admin;
 
-    public Vendedor(String user, String password, String lastname, String name, double dni, String fechaNacimiento, String fechaIncorporacion, int vendidos, boolean isAdmin) {
+    public Vendedor(String user, String password, String lastname, String name, long dni, String fechaNacimiento, String fechaIncorporacion, int vendidos, boolean isAdmin) {
         this.user = user;
         this.password = password;
         this.lastname = lastname;
@@ -48,7 +48,7 @@ public class Vendedor {
         return name;
     }
 
-    public double getDni() {
+    public long getDni() {
         return dni;
     }
 

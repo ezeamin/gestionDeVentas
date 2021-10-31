@@ -21,9 +21,9 @@ public class GUIEliminarDato extends javax.swing.JFrame {
      */
     Logic lo;
     String table;
-    double thisDNI;
+    long thisDNI;
     
-    public GUIEliminarDato(DB _data,String _table,double _thisDNI) {
+    public GUIEliminarDato(DB _data,String _table,long _thisDNI) {
         thisDNI=_thisDNI;
         init(_data,_table);
     }
