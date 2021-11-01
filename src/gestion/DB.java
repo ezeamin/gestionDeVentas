@@ -500,6 +500,18 @@ public class DB {
         return null;
     }
     
+    private void refreshIndex(String table) throws SQLException{
+        String query="SET @rownum = 0;";
+        System.out.println(""+query);
+        Statement st=conexion.createStatement();
+        st.executeUpdate(query);        
+        
+        
+        query="UPDATE "+table+" SET "+table+".Num = @rownum:=@rownum+1";
+        System.out.println(""+query);
+        st.executeUpdate(query); 
+    }   
+    
     public boolean eraseLine(String table,long dni){
         boolean conn=false;
         
@@ -509,6 +521,30 @@ public class DB {
             String query="DELETE FROM "+table+" WHERE dni="+Long.toString(dni);
             Statement st=conexion.createStatement();
             if(st.executeUpdate(query)!=0) conn=true; //si ==0 significa que no encontró el usuario
+            
+            refreshIndex(table);
+            
+            MySQLCloseConnection();
+            return conn;
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public boolean eraseLine(String table,int id){
+        boolean conn=false;
+        
+        try{
+            MySQLConnection();
+
+            String query="DELETE FROM "+table+" WHERE id="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            if(st.executeUpdate(query)!=0) conn=true; //si ==0 significa que no encontró el producto
+            
+            refreshIndex(table);
             
             MySQLCloseConnection();
             return conn;

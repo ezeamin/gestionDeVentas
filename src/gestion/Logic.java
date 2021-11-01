@@ -293,10 +293,6 @@ public class Logic {
                 txt="Cliente";
                 break;
             }
-            case "productos":{
-                txt="Producto";
-                break;
-            }
         }
         
         if(!data.eraseLine(table,DNI)){
@@ -359,6 +355,28 @@ public class Logic {
         
         return eliminar("clientes",DNI);
     }
+    
+    public boolean eliminarProducto(String txtId){
+        int id=0;
+        
+        try{
+            id=Integer.parseInt(txtId);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, "ID no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+            return true;
+        }
+        
+        if(!data.eraseLine("productos",id)){
+            JOptionPane.showMessageDialog(null,"Producto no encontrado","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        else {
+            JOptionPane.showMessageDialog(null,"Producto eliminado");
+            return true;
+        }
+    }
+    
     
     public String[] getColumnNames(String table) throws SQLException{
         ResultSetMetaData meta=data.getColumnNames(table);

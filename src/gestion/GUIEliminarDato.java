@@ -7,8 +7,10 @@ package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,23 +23,29 @@ public class GUIEliminarDato extends javax.swing.JFrame {
      */
     Logic lo;
     String table;
+    DefaultTableModel tablita;
     long thisDNI;
+    int length;
+    DB data;
     
-    public GUIEliminarDato(DB _data,String _table,long _thisDNI) {
+    public GUIEliminarDato(DB _data,String _table,long _thisDNI) throws SQLException {
         thisDNI=_thisDNI;
         init(_data,_table);
     }
     
-    public GUIEliminarDato(DB _data,String _table) {
+    public GUIEliminarDato(DB _data,String _table) throws SQLException {
         init(_data,_table);
     }
     
-    private void init(DB _data,String _table){
+    private void init(DB _data,String _table) throws SQLException{
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
+        
+        txtEntrada.grabFocus();
        
         lo=new Logic(_data);
+        data=_data;
         table=_table;
         
         switch(table){
@@ -66,6 +74,43 @@ public class GUIEliminarDato extends javax.swing.JFrame {
             }
         };
         txtEntrada.addActionListener(action);
+        
+        tablita=new DefaultTableModel();
+        String names[]=lo.getColumnNames(table);
+        length=names.length;
+        
+        for(int i=1;i<length;i++){
+            if(table.equals("empleados") && (i<3)) continue; //escondo num, user y password
+            tablita.addColumn(names[i]);
+        }
+        tabla.setModel(tablita);
+        
+        cargarDatos();
+    }
+    
+    private void cargarDatos() throws SQLException{
+        String info[];
+        
+        
+        for(int i=1;i<=data.getRowCount(table);i++){
+            info=data.getRow(table,i); 
+            
+            if(table.equals("empleados")){ //esconder num, user y password
+                for(int j=0;j<info.length-3;j++){
+                    info[j]=info[j+3];
+                }
+                
+                if("1".equals(info[info.length-4])) info[info.length-4]="Si";
+                else info[info.length-4]="No";
+            }
+            else{ //esconder num
+                for(int j=0;j<info.length-1;j++){
+                    info[j]=info[j+1];
+                }
+            }
+            
+            tablita.addRow(info); //agregar que solo muestre x columnas y no todas
+        }
     }
 
     /**
@@ -174,7 +219,7 @@ public class GUIEliminarDato extends javax.swing.JFrame {
                 break;
             }
             case "productos":{
-                //if(lo.eliminarProducto(txtEntrada.getText(),thisDNI)) dispose();
+                if(lo.eliminarProducto(txtEntrada.getText())) dispose();
                 break;
             }
         }

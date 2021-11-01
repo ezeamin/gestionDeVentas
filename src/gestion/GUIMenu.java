@@ -249,8 +249,12 @@ public class GUIMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNuevoVendedorActionPerformed
 
     private void btnEliminarVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarVendedorActionPerformed
-        // TODO add your handling code here:
-        new GUIEliminarDato(data,"empleados",vend.getDni()).setVisible(true);
+        try {
+            // TODO add your handling code here:
+            new GUIEliminarDato(data,"empleados",vend.getDni()).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnEliminarVendedorActionPerformed
 
     private void btnRegistroVendedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroVendedoresActionPerformed
@@ -294,8 +298,12 @@ public class GUIMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void btnEliminarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarClienteActionPerformed
-        // TODO add your handling code here:
-        new GUIEliminarDato(data,"clientes").setVisible(true);
+        try {
+            // TODO add your handling code here:
+            new GUIEliminarDato(data,"clientes").setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnEliminarClienteActionPerformed
 
     private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
@@ -304,8 +312,12 @@ public class GUIMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarProductoActionPerformed
 
     private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
-        // TODO add your handling code here:
-        new GUIEliminarDato(data,"productos").setVisible(true);
+        try {
+            // TODO add your handling code here:
+            new GUIEliminarDato(data,"productos").setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnEliminarProductoActionPerformed
 
     /**
