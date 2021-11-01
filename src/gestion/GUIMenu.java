@@ -29,7 +29,7 @@ public class GUIMenu extends javax.swing.JFrame {
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
-        new Utilidades().scaleImage(logo);
+        new Utilidades().scaleImage(logo,"computadora.png");
 
         data=_data;
         user=_user;
@@ -299,7 +299,7 @@ public class GUIMenu extends javax.swing.JFrame {
 
     private void btnNuevoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoClienteActionPerformed
         // TODO add your handling code here:
-        new GUINuevoCliente(data).setVisible(true);
+        //new GUINuevoCliente(data).setVisible(true);
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void btnEliminarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarClienteActionPerformed

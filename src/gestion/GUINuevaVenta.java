@@ -6,20 +6,18 @@
 package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -33,10 +31,10 @@ public class GUINuevaVenta extends javax.swing.JFrame {
      */
     Logic lo;
     DB data;
-    int length;
     DefaultTableModel tabla1;
     DefaultTableModel tabla2;
     TableRowSorter sorter;
+    ArrayList<String[]> ids;
     
     public GUINuevaVenta(DB _data) throws SQLException {
         initComponents();
@@ -45,6 +43,7 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         
         data=_data;
         lo=new Logic(data);
+        ids=new ArrayList<String[]>();
         
         Action action = new AbstractAction(){ //para detectar el enter
             @Override
@@ -55,13 +54,16 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         };
         txtEntrada.addActionListener(action);
         
+        initTable();
+    }
+    
+    private void initTable() throws SQLException{
         tabla1=new DefaultTableModel();
         String names[]=lo.getColumnNames("productos");
-        length=names.length;
         
         //hacer que no sea editable
         
-        for(int i=1;i<length;i++){
+        for(int i=1;i<names.length;i++){
             tabla1.addColumn(names[i]);
         }
         tablaProductos.setModel(tabla1);
@@ -148,8 +150,18 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         JLabel3.setText("$");
 
         btnContinuar.setText("Continuar");
+        btnContinuar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContinuarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         tablaTicket.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -183,28 +195,27 @@ public class GUINuevaVenta extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(btnContinuar)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(txtBuscar)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(JLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtTotal))))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtBuscar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(JLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtTotal))
+                            .addComponent(btnContinuar, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -230,7 +241,7 @@ public class GUINuevaVenta extends javax.swing.JFrame {
                     .addComponent(txtTotal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnContinuar)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         pack();
@@ -263,20 +274,25 @@ public class GUINuevaVenta extends javax.swing.JFrame {
                     tabla2.setValueAt(cant, i, 2);
                     tabla2.setValueAt(precio*cant, i, 3);
                     end=true;
+                    
+                    info[2]=Integer.toString(cant);
+                    info[3]=Float.toString(precio);
+                    
+                    ids.set(i,info);
+                    
                     break;
                 }
             }
 
-            if(!end) tabla2.addRow(info);
-
-            float total=0;
-            for(int i=0;i<tabla2.getRowCount();i++){
-                total+=Float.parseFloat(tabla2.getValueAt(i, 3).toString());
+            if(!end) {
+                tabla2.addRow(info);
+                ids.add(info);
             }
-            txtTotal.setText(Float.toString(total));
+
+            new Utilidades().setTotal(txtTotal,tabla2);
         }
         catch(Exception e){
-            JOptionPane.showMessageDialog(null,"Error: No hay datos seleccionados");
+            JOptionPane.showMessageDialog(null,"Error: No hay datos seleccionados","Atencion",JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
@@ -311,6 +327,60 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         
         txtEntrada.grabFocus();
     }//GEN-LAST:event_txtEntradaKeyTyped
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        boolean end=false;
+        
+        try{
+            int row=tablaTicket.getSelectedRow();
+            
+            int cant=Integer.parseInt(tabla2.getValueAt(row, 2).toString());
+            float precio=Float.parseFloat(tabla2.getValueAt(row, 3).toString())/cant;
+            
+            cant--;
+            
+            if(cant==0){
+                tabla2.removeRow(row);
+                ids.remove(row);
+            }
+            else{
+                tabla2.setValueAt(cant, row, 2);
+                tabla2.setValueAt(precio*cant, row, 3);
+                
+                
+                String info[]=new String[4];
+                info[0]=tabla2.getValueAt(row, 0).toString();
+                info[1]=tabla2.getValueAt(row, 1).toString();
+                info[2]=Integer.toString(cant);
+                info[3]=Float.toString(precio);
+                    
+                ids.set(row,info);
+            }
+            
+            new Utilidades().setTotal(txtTotal,tabla2);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Error: No hay datos seleccionados","Atencion",JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinuarActionPerformed
+        // TODO add your handling code here:
+        if(ids.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Compra vacia","Atencion",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opc=JOptionPane.showInternalConfirmDialog(null, "¿Está seguro? No se podrá modificar la factura.","Atencion",0);
+        if(opc==1) return;
+        
+        try {
+            new GUIPago(data,ids).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUINuevaVenta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dispose();
+    }//GEN-LAST:event_btnContinuarActionPerformed
 
     /**
      * @param args the command line arguments

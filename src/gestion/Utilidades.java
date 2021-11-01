@@ -7,6 +7,8 @@ package gestion;
 
 import java.awt.Image;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -16,8 +18,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Utilidades {
     
-    public void scaleImage(JLabel logo){
-        ImageIcon icon = new ImageIcon("D:\\Documentos varios\\Documentos\\Facultad\\2do año\\Programacion 2\\Programas\\Gestion\\utilities\\computadora.png");
+    public void scaleImage(JLabel logo,String name){
+        ImageIcon icon = new ImageIcon("D:\\Documentos varios\\Documentos\\Facultad\\2do año\\Programacion 2\\Programas\\Gestion\\utilities\\"+name);
         Image img = icon.getImage();
         Image imgScale = img.getScaledInstance(logo.getWidth(), logo.getHeight(), Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(imgScale);
@@ -47,5 +49,30 @@ public class Utilidades {
             
             tabla.addRow(info); //agregar que solo muestre x columnas y no todas
         }
+    }
+    
+    public void cargarDatos(DefaultTableModel tabla,ArrayList<String[]> array) throws SQLException{
+        for(int i=0;i<array.size();i++){
+            tabla.addRow(array.get(i)); //agregar que solo muestre x columnas y no todas
+        }
+    }
+    
+    public double format(double valor){
+        DecimalFormat numberFormat = new DecimalFormat("#.00");
+        String temp=numberFormat.format(valor);
+        return Double.parseDouble(temp.replace(',', '.'));
+    }
+    
+    public double setTotal(JLabel txtTotal,DefaultTableModel tabla){
+        double total=0;
+        for(int i=0;i<tabla.getRowCount();i++){
+            total+=(Float.parseFloat(tabla.getValueAt(i, 3).toString())*Float.parseFloat(tabla.getValueAt(i, 2).toString()));
+        }
+        
+        total=format(total);
+        
+        txtTotal.setText(Double.toString(total));
+        
+        return total;
     }
 }

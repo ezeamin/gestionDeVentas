@@ -24,7 +24,7 @@ public class GUINuevoCliente extends javax.swing.JFrame {
     Logic lo;
     boolean isAdmin;
     
-    public GUINuevoCliente(DB _data) {
+    public GUINuevoCliente(DB _data,long dni) {
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
@@ -43,6 +43,8 @@ public class GUINuevoCliente extends javax.swing.JFrame {
         txtDNI.addActionListener(action);
         txtDireccion.addActionListener(action);
         txtNum.addActionListener(action);
+        
+        if(dni!=0) txtDNI.setText(Long.toString(dni));
     }
 
     /**

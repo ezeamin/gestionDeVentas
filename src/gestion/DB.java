@@ -500,6 +500,36 @@ public class DB {
         return null;
     }
     
+    public Cliente createObjectCliente(long dni) throws SQLException{
+        try{
+            MySQLConnection();
+
+            String query="SELECT * FROM clientes WHERE dni="+dni;
+            Statement st=conexion.createStatement();
+            ResultSet rs=st.executeQuery(query);
+            
+            String lastname,name,direccion;
+            Cliente client = null;
+
+            if(rs.next()){
+                lastname=rs.getString("apellido");
+                name=rs.getString("nombre");
+                direccion=rs.getString("direccion");
+                
+                client=new Cliente(lastname,name,dni,direccion);
+            }
+
+            MySQLCloseConnection();
+            
+            return client;
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return null;
+    }
+    
     private void refreshIndex(String table) throws SQLException{
         String query="SET @rownum = 0;";
         Statement st=conexion.createStatement();

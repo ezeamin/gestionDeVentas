@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -389,5 +390,106 @@ public class Logic {
         }
       
         return names;
+    }
+    
+    public void getCliente(String _txtDni,JLabel txtApellido,JLabel txtNombre,JLabel txtDni,JLabel txtDireccion) throws SQLException{
+        long dni;
+        
+        if(incorrectDNI(_txtDni)) return;
+        else dni=Long.parseLong(_txtDni);
+        
+        Cliente client=data.createObjectCliente(dni);
+        
+        if(client!=null){
+            txtApellido.setText(client.getApellido());
+            txtApellido.setVisible(true);
+            txtNombre.setText(client.getNombre());
+            txtNombre.setVisible(true);
+            txtDni.setText(Long.toString(client.getDni()));
+            txtDni.setVisible(true);
+            txtDireccion.setText(client.getDireccion());
+            txtDireccion.setVisible(true);
+        }
+        else{
+            new GUINuevoCliente(data,dni).setVisible(true);
+        }
+    }
+    
+    public void agregarCargoPorTarjeta(double total,DefaultTableModel tabla){
+        String info[]=new String[4];
+        double cargo;
+
+        cargo=new Utilidades().format(total*0.10);
+
+        info[0]="1";
+        info[1]="Cargo por tarjeta (10%)";
+        info[2]="1";
+        info[3]=Double.toString(cargo);
+        tabla.addRow(info);
+    }
+    
+    public void validarTarjeta(String txtTarjeta,String txtMesVenc,String txtAnioVenc,String txtCodigo){
+        long tarjeta;
+        int mes,anio,codigo;
+        
+        if("".equals(txtTarjeta) || "".equals(txtMesVenc) || "".equals(txtAnioVenc) || "".equals(txtCodigo)){
+            JOptionPane.showMessageDialog(null,"Complete los campos","Atencion",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try{
+            if(txtTarjeta.length()!=16){
+                JOptionPane.showMessageDialog(null,"Tarjeta no valida","Atencion",JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            tarjeta=Long.parseLong(txtTarjeta);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Datos no validos","Atencion",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try{
+            if(txtAnioVenc.length()==4){
+                txtAnioVenc=txtAnioVenc.substring(2,4);
+                System.out.println(""+txtAnioVenc);
+            }
+            mes=Integer.parseInt(txtMesVenc);
+            anio=Integer.parseInt(txtAnioVenc);
+            
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yy");
+            int anioAct=Integer.parseInt(dtf.format(LocalDateTime.now()));
+            dtf = DateTimeFormatter.ofPattern("MM");
+            int mesAct=Integer.parseInt(dtf.format(LocalDateTime.now()));
+            
+            if(mes>12 || mes<1 ){
+                JOptionPane.showMessageDialog(null,"Fecha no valida","Atencion",JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if((anio==anioAct && mes<=mesAct) || anio<anioAct){
+                JOptionPane.showMessageDialog(null,"Tarjeta vencida","Atencion",JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Fecha no valida","Atencion",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try{
+            if(txtCodigo.length()!=3){
+                JOptionPane.showMessageDialog(null,"Codigo no valido","Atencion",JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            codigo=Integer.parseInt(txtCodigo);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Codigo no valido","Atencion",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        JOptionPane.showMessageDialog(null,"Tarjeta validada correctamente");
     }
 }
