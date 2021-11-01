@@ -25,14 +25,12 @@ public class GUILogin extends javax.swing.JFrame {
     Logic lo;
     int cont; //para texto error
     
-    public GUILogin() {
+    public GUILogin(boolean reset) {
         initComponents();
         FlatLightLaf.setup();
         txtError.setVisible(false);
         setLocationRelativeTo(null);
         new Utilidades().scaleImage(logo,"computadora.png"); 
-        
-        boolean reset=true;
         
         data=new DB(reset,"gestion","root",""); 
         lo=new Logic(data);
@@ -228,15 +226,7 @@ public class GUILogin extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GUILogin().setVisible(true);
-            }
-        });
-    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;

@@ -23,22 +23,36 @@ public class DB {
         userDB=_user;
         passDB=_pass;
         
-        if(crear) createDB(_db_name);
+        if(crear) createDB();
     }
     
-    public void createDB(String name){
+    public boolean checkConnection(){
+        try{
+            if(MySQLConnection()){
+                MySQLCloseConnection();
+                return true;
+            }
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public void createDB(){
         try{
             System.out.println("-----Creacion de DB-----");
             MySQLFirstConnection();
             
-            String query="DROP SCHEMA IF EXISTS "+name; //modificar despues!!!
+            String query="DROP SCHEMA IF EXISTS "+db_name;
             Statement st=conexion.createStatement();
             st.executeUpdate(query);
             
-            query="CREATE DATABASE "+name;
+            query="CREATE DATABASE "+db_name;
             st=conexion.createStatement();
             st.executeUpdate(query);
-            System.out.println("Se ha creado la base de datos "+name);
+            System.out.println("Se ha creado la base de datos "+db_name);
             MySQLCloseConnection();
             
             System.out.println("\n-----Creacion de tablas-----");
@@ -49,19 +63,13 @@ public class DB {
             createTableClientes();
             createTableProductos();
             createTableVentas();
-            
-            //info
-            /*System.out.println("\n-----Cargar Info-----");
-            newLine(false,"clientes","'Amin'","'Carlos'",17860733,"'Pringles 425'",3);
-            newLine(false,"productos",1111,"'Computadora'",123,3);
-            newLine(false,"ventas","'2020-09-26'","'Eze'","'Amin'",123);*/
-            
+
             MySQLCloseConnection();
+            JOptionPane.showMessageDialog(null, "Base de datos creada correctamente");
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error creando base de datos","Atencion",JOptionPane.WARNING_MESSAGE);
-            System.exit(1);
         }
     }
     
@@ -128,7 +136,6 @@ public class DB {
         catch(Exception e){
             System.out.println("Error al crear tabla"+" empleados: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error al crear tabla empleados","Atencion",JOptionPane.WARNING_MESSAGE);
-            System.exit(1);
         }
     }
     
@@ -149,7 +156,6 @@ public class DB {
         catch(Exception e){
             System.out.println("Error al crear tabla"+" clientes: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error al crear tabla clientes","Atencion",JOptionPane.WARNING_MESSAGE);
-            System.exit(1);
         }
     }
     
@@ -169,7 +175,6 @@ public class DB {
         catch(Exception e){
             System.out.println("Error al crear tabla"+" productos: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error al crear tabla productos","Atencion",JOptionPane.WARNING_MESSAGE);
-            System.exit(1);
         }
     }
     
@@ -189,7 +194,6 @@ public class DB {
         catch(Exception e){
             System.out.println("Error al crear tabla"+" ventas: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error al crear tabla ventas","Atencion",JOptionPane.WARNING_MESSAGE);
-            System.exit(1);
         }
     }
     

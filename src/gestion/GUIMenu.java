@@ -244,7 +244,7 @@ public class GUIMenu extends javax.swing.JFrame {
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         // TODO add your handling code here:
-        new GUILogin().setVisible(true);
+        new GUILogin(false).setVisible(true);
         dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
