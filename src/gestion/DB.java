@@ -241,6 +241,30 @@ public class DB {
         return false;
     }
     
+    private boolean checkExistance(boolean conectar,String table,int id){
+        try{
+            if(conectar) MySQLConnection();
+        
+            String query="SELECT ID FROM "+table;
+            Statement st=conexion.createStatement();
+            ResultSet rs=st.executeQuery(query);
+
+            while (rs.next()) {
+                if(id==rs.getInt("ID")){
+                    if(conectar) MySQLCloseConnection();
+                    return true;
+                }
+            }
+            
+            if(conectar) MySQLCloseConnection();
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+    
+        return false;
+    }
+    
     private int getAutoIncrement(String table) throws SQLException{
         int inc=0;
         
@@ -355,9 +379,15 @@ public class DB {
     }
     
     //producto
-    public void newLine(boolean conectar,String table,int id,String name,float price,int existance){
+    public boolean newLine(boolean conectar,String table,int id,String name,float price,int existance){
         try{
             if(conectar) MySQLConnection();
+            
+            if(checkExistance(false,table,id)){
+                JOptionPane.showMessageDialog(null, "Ya existe un producto con este ID","Atencion",JOptionPane.WARNING_MESSAGE);
+                if(conectar) MySQLCloseConnection();
+                return false;
+            }
             
             resetAutoIncrement(table);
             
@@ -371,14 +401,18 @@ public class DB {
             
             System.out.println("Se cargó la linea en la tabla "+table);
             if(conectar) MySQLCloseConnection();
+            
+            return true;
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
+        
+        return false;
     }
     
     //venta
-    public void newLine(boolean conectar,String table,String date,String seller, String client,float price){
+    public boolean newLine(boolean conectar,String table,String date,String seller, String client,float price){
         try{
             if(conectar) MySQLConnection();
             
@@ -394,10 +428,14 @@ public class DB {
             
             System.out.println("Se cargó la linea en la tabla "+table);
             if(conectar) MySQLCloseConnection();
+            
+            return true;
         }
         catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
+        
+        return false;
     }
     
     public String login(String _user,String _pass) throws SQLException{

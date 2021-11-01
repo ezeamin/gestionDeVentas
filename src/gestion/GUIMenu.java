@@ -113,9 +113,19 @@ public class GUIMenu extends javax.swing.JFrame {
         jMenu3.setText("Productos");
 
         btnAgregarProducto.setText("Añadir producto");
+        btnAgregarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarProductoActionPerformed(evt);
+            }
+        });
         jMenu3.add(btnAgregarProducto);
 
         btnEliminarProducto.setText("Eliminar producto");
+        btnEliminarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarProductoActionPerformed(evt);
+            }
+        });
         jMenu3.add(btnEliminarProducto);
 
         btnRegistroProductos.setText("Registro de productos");
@@ -287,6 +297,16 @@ public class GUIMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
         new GUIEliminarDato(data,"clientes").setVisible(true);
     }//GEN-LAST:event_btnEliminarClienteActionPerformed
+
+    private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
+        // TODO add your handling code here:
+        new GUINuevoProducto(data).setVisible(true);
+    }//GEN-LAST:event_btnAgregarProductoActionPerformed
+
+    private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
+        // TODO add your handling code here:
+        new GUIEliminarDato(data,"productos").setVisible(true);
+    }//GEN-LAST:event_btnEliminarProductoActionPerformed
 
     /**
      * @param args the command line arguments

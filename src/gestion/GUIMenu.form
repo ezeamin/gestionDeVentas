@@ -36,11 +36,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="A&#xf1;adir producto"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAgregarProductoActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="btnEliminarProducto">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Eliminar producto"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEliminarProductoActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="btnRegistroProductos">
               <Properties>

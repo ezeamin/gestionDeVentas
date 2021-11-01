@@ -39,8 +39,8 @@ public class GUITable extends javax.swing.JFrame {
         String names[]=lo.getColumnNames(strTabla);
         length=names.length;
         
-        for(int i=0;i<length;i++){
-            if(strTabla.equals("empleados") && (i==1 || i==2)) continue; //escondo user y password
+        for(int i=1;i<length;i++){
+            if(strTabla.equals("empleados") && (i<3)) continue; //escondo num, user y password
             tabla.addColumn(names[i]);
         }
         table.setModel(tabla);
@@ -53,7 +53,21 @@ public class GUITable extends javax.swing.JFrame {
         
         
         for(int i=1;i<=data.getRowCount(strTabla);i++){
-            info=data.getRow(strTabla,i);    
+            info=data.getRow(strTabla,i); 
+            
+            if(strTabla.equals("empleados")){ //esconder num, user y password
+                for(int j=0;j<info.length-3;j++){
+                    info[j]=info[j+3];
+                }
+                
+                if("1".equals(info[info.length-4])) info[info.length-4]="Si";
+                else info[info.length-4]="No";
+            }
+            else{ //esconder num
+                for(int j=0;j<info.length-1;j++){
+                    info[j]=info[j+1];
+                }
+            }
             
             tabla.addRow(info); //agregar que solo muestre x columnas y no todas
         }

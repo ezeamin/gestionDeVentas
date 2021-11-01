@@ -145,6 +145,71 @@ public class Logic {
         return false;
     }
     
+    public boolean nuevoProducto(String _txtNombre,String _txtPrecio,String _txtID,String _txtExistencia){
+        int ID=0,existencia=0;
+        float precio=0;
+
+        //COMPROBACIONES
+        
+        //id
+        try{
+            ID=Integer.parseInt(_txtID);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, "ID no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        //precio
+        try{
+            precio=Float.parseFloat(_txtPrecio);
+        }
+        catch(Exception e){
+            try{
+                precio=Float.parseFloat(_txtPrecio.replace(',', '.'));
+            }
+            catch(Exception e2){
+                JOptionPane.showMessageDialog(null, "Importe no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+                System.out.println("E: "+e2.getMessage());
+                return false;
+            }
+        }
+        
+        //existencia
+        try{
+            existencia=Integer.parseInt(_txtExistencia);
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Cantidad no valida. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        //campos vacios
+        if("".equals(_txtPrecio) || "".equals(_txtNombre) || "".equals(_txtID) || "".equals(_txtExistencia)){
+            JOptionPane.showMessageDialog(null, "Complete todos los campos","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        //FIN COMPROBACIONES
+        
+        try{
+            _txtNombre=Character.toUpperCase(_txtNombre.charAt(0))+(_txtNombre.toLowerCase()).substring(1);
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        String txtNombre="'"+_txtNombre+"'";
+        
+        
+        if(data.newLine(true,"productos",ID,txtNombre,precio,existencia)) {
+            JOptionPane.showMessageDialog(null, "Producto añadido exitosamente");
+            return true;
+        }
+        
+        return false;
+    }
+    
     public boolean nuevoVendedor(String _txtNombre,String _txtApellido,String _txtDNI,String _txtDiaNac,String _txtMesNac,String _txtAnioNac,String _txtUsuario,String _txtContrasenia,String _txtRepetirContrasenia, boolean isAdmin){
         long DNI;
         int dia=0,mes=0,anio=0;
