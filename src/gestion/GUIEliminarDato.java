@@ -84,16 +84,15 @@ public class GUIEliminarDato extends javax.swing.JFrame {
         tablita=new DefaultTableModel();
         String names[]=lo.getColumnNames(table);
         length=names.length;
-        
-        //hacer que no sea editable
-        
+
         for(int i=1;i<length;i++){
             if(table.equals("empleados") && (i<3)) continue; //escondo num, user y password
             tablita.addColumn(names[i]);
         }
         tabla.setModel(tablita);
         
-        cargarDatos();
+        //cargarDatos();
+        new Utilidades().cargarDatos(data, table, tablita);
         
         tabla.setDefaultEditor(Object.class, null);
         
@@ -107,31 +106,6 @@ public class GUIEliminarDato extends javax.swing.JFrame {
 
             sorter.setSortKeys(sortKeys);
             sorter.sort();
-        }
-    }
-
-    private void cargarDatos() throws SQLException{
-        String info[];
-        
-        
-        for(int i=1;i<=data.getRowCount(table);i++){
-            info=data.getRow(table,i); 
-            
-            if(table.equals("empleados")){ //esconder num, user y password
-                for(int j=0;j<info.length-3;j++){
-                    info[j]=info[j+3];
-                }
-                
-                if("1".equals(info[info.length-4])) info[info.length-4]="Si";
-                else info[info.length-4]="No";
-            }
-            else{ //esconder num
-                for(int j=0;j<info.length-1;j++){
-                    info[j]=info[j+1];
-                }
-            }
-            
-            tablita.addRow(info); //agregar que solo muestre x columnas y no todas
         }
     }
 

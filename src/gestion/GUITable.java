@@ -45,36 +45,12 @@ public class GUITable extends javax.swing.JFrame {
         }
         table.setModel(tabla);
         
-        cargarDatos();
+        //cargarDatos();
+        new Utilidades().cargarDatos(data, strTabla, tabla);
         
         table.setDefaultEditor(Object.class, null);
     }
     
-    private void cargarDatos() throws SQLException{
-        String info[];
-        
-        
-        for(int i=1;i<=data.getRowCount(strTabla);i++){
-            info=data.getRow(strTabla,i); 
-            
-            if(strTabla.equals("empleados")){ //esconder num, user y password
-                for(int j=0;j<info.length-3;j++){
-                    info[j]=info[j+3];
-                }
-                
-                if("1".equals(info[info.length-4])) info[info.length-4]="Si";
-                else info[info.length-4]="No";
-            }
-            else{ //esconder num
-                for(int j=0;j<info.length-1;j++){
-                    info[j]=info[j+1];
-                }
-            }
-            
-            tabla.addRow(info); //agregar que solo muestre x columnas y no todas
-        }
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
