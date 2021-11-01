@@ -6,11 +6,17 @@
 package gestion;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -79,6 +85,8 @@ public class GUIEliminarDato extends javax.swing.JFrame {
         String names[]=lo.getColumnNames(table);
         length=names.length;
         
+        //hacer que no sea editable
+        
         for(int i=1;i<length;i++){
             if(table.equals("empleados") && (i<3)) continue; //escondo num, user y password
             tablita.addColumn(names[i]);
@@ -86,8 +94,22 @@ public class GUIEliminarDato extends javax.swing.JFrame {
         tabla.setModel(tablita);
         
         cargarDatos();
+        
+        tabla.setDefaultEditor(Object.class, null);
+        
+        if(!"productos".equals(table)){
+            TableRowSorter<TableModel> sorter = new TableRowSorter<>(tabla.getModel());
+            tabla.setRowSorter(sorter);
+            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+
+            int columnIndexToSort = 0;
+            sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
+
+            sorter.setSortKeys(sortKeys);
+            sorter.sort();
+        }
     }
-    
+
     private void cargarDatos() throws SQLException{
         String info[];
         
@@ -137,6 +159,12 @@ public class GUIEliminarDato extends javax.swing.JFrame {
 
         txtEntradaLabel.setText("DNI:");
 
+        txtEntrada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEntradaActionPerformed(evt);
+            }
+        });
+
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,6 +186,15 @@ public class GUIEliminarDato extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tabla.setFocusable(false);
+        tabla.setShowGrid(false);
+        tabla.setShowHorizontalLines(true);
+        tabla.setShowVerticalLines(true);
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -225,6 +262,24 @@ public class GUIEliminarDato extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void txtEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntradaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEntradaActionPerformed
+
+    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
+        // TODO add your handling code here:
+        int row,column=2;
+        
+        row=tabla.getSelectedRow();
+        
+        if("productos".equals(table)) column=0;
+        
+        String value = tabla.getModel().getValueAt(row, column).toString();
+        
+        txtEntrada.setText(value);
+        
+    }//GEN-LAST:event_tablaMouseClicked
 
     /**
      * @param args the command line arguments

@@ -46,6 +46,8 @@ public class GUITable extends javax.swing.JFrame {
         table.setModel(tabla);
         
         cargarDatos();
+        
+        table.setDefaultEditor(Object.class, null);
     }
     
     private void cargarDatos() throws SQLException{

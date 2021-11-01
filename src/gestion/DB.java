@@ -502,14 +502,12 @@ public class DB {
     
     private void refreshIndex(String table) throws SQLException{
         String query="SET @rownum = 0;";
-        System.out.println(""+query);
         Statement st=conexion.createStatement();
         st.executeUpdate(query);        
         
         
         query="UPDATE "+table+" SET "+table+".Num = @rownum:=@rownum+1";
-        System.out.println(""+query);
-        st.executeUpdate(query); 
+        st.executeUpdate(query);
     }   
     
     public boolean eraseLine(String table,long dni){
