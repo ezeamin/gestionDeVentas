@@ -110,6 +110,11 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         txtTotal = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Nueva venta");
@@ -266,9 +271,14 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             
             row=sorter.convertRowIndexToModel(selectedRow);
 
-            for(int i=0;i<3;i++){
+            for(int i=0;i<4;i++){
                 info[i]=tabla1.getValueAt(row, i).toString(); 
             }  
+            
+            if(info[3].equals("0")){
+                JOptionPane.showMessageDialog(null,"No hay mas productos disponibles del item seleccionado","Atencion",JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             info[3]=info[2];
             info[2]="1";
@@ -276,7 +286,7 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             for(int i=0;i<tabla2.getRowCount();i++){
                 if(info[0].equals(tabla2.getValueAt(i, 0).toString())){
                     int cant=Integer.parseInt(tabla2.getValueAt(i, 2).toString());
-                    float precio=Float.parseFloat(tabla2.getValueAt(row, 3).toString());
+                    float precio=Float.parseFloat(tabla2.getValueAt(i, 3).toString());
 
                     cant++;
                     tabla2.setValueAt(cant, i, 2);
@@ -298,11 +308,25 @@ public class GUINuevaVenta extends javax.swing.JFrame {
 
             new Utilidades().setTotal(txtTotal,tabla2);
             
-            data.deleteProducto(ids.get(row)); //PERO SI NO SE HACE LA COMPRA, NO BORRAR
+            String[] info2=new String[4];
+            for(int i=0;i<ids.size();i++){
+                info2=ids.get(i);
+                
+                if(info2[0].equals(tabla1.getValueAt(row, 0).toString())){
+                    break;
+                }
+            }
+            
+            data.deleteProducto(info2); //PERO SI NO SE HACE LA COMPRA, NO BORRAR
             initTable(false);
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null,"Error: No hay datos seleccionados","Atencion",JOptionPane.WARNING_MESSAGE);
+            try {
+                throw e;
+            } catch (Exception ex) {
+                Logger.getLogger(GUINuevaVenta.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
@@ -393,6 +417,21 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         }
         dispose();
     }//GEN-LAST:event_btnContinuarActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        String[] info=new String[4];
+        for(int i=0;i<tabla2.getRowCount();i++){
+            for(int j=0;j<Integer.parseInt(tabla2.getValueAt(i, 2).toString());j++){
+                info[0]=tabla2.getValueAt(i, 0).toString();
+                info[1]=tabla2.getValueAt(i, 1).toString();
+                info[2]=tabla2.getValueAt(i, 2).toString();
+                info[3]=tabla2.getValueAt(i, 3).toString();
+                
+                data.addProducto(info);
+            }
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

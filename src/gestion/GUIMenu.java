@@ -69,6 +69,7 @@ public class GUIMenu extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         btnAgregarProducto = new javax.swing.JMenuItem();
         btnEliminarProducto = new javax.swing.JMenuItem();
+        btnAgregarStock = new javax.swing.JMenuItem();
         btnRegistroProductos = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         btnNuevoVendedor = new javax.swing.JMenuItem();
@@ -127,6 +128,14 @@ public class GUIMenu extends javax.swing.JFrame {
             }
         });
         jMenu3.add(btnEliminarProducto);
+
+        btnAgregarStock.setText("Agregar stock");
+        btnAgregarStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarStockActionPerformed(evt);
+            }
+        });
+        jMenu3.add(btnAgregarStock);
 
         btnRegistroProductos.setText("Registro de productos");
         btnRegistroProductos.addActionListener(new java.awt.event.ActionListener() {
@@ -317,12 +326,22 @@ public class GUIMenu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEliminarProductoActionPerformed
 
+    private void btnAgregarStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarStockActionPerformed
+        try {
+            // TODO add your handling code here:
+            new GUIBuscarProducto(data).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnAgregarStockActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnAgregarProducto;
+    private javax.swing.JMenuItem btnAgregarStock;
     private javax.swing.JMenuItem btnCerrarSesion;
     private javax.swing.JMenuItem btnEliminarCliente;
     private javax.swing.JMenuItem btnEliminarProducto;

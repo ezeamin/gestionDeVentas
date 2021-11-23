@@ -10,12 +10,18 @@ import java.sql.ResultSetMetaData;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -85,7 +91,9 @@ public class Logic {
     
     private boolean incorrectString(String str){
         for(int i=0;i<str.length();i++){
-            if(!Character.isAlphabetic(str.charAt(i))) return true;
+            if(!Character.isAlphabetic(str.charAt(i))){
+                if(str.charAt(i)!=' ') return true;
+            }
         }
         
         return false;
@@ -132,10 +140,20 @@ public class Logic {
         
         //FIN COMPROBACIONES
         
-        _txtApellido=Character.toUpperCase(_txtApellido.charAt(0))+(_txtApellido.toLowerCase()).substring(1);
+        if(_txtApellido.contains(" ")){
+            int pos=_txtApellido.indexOf(" ");
+            _txtApellido=Character.toUpperCase(_txtApellido.charAt(0))+(_txtApellido.toLowerCase()).substring(1,pos+1)+Character.toUpperCase(_txtApellido.charAt(pos+1))+(_txtApellido.toLowerCase()).substring(pos+2);
+        }
+        else _txtApellido=Character.toUpperCase(_txtApellido.charAt(0))+(_txtApellido.toLowerCase()).substring(1);
         String txtApellido="'"+_txtApellido+"'";
-        _txtNombre=Character.toUpperCase(_txtNombre.charAt(0))+(_txtNombre.toLowerCase()).substring(1);
+        
+        if(_txtNombre.contains(" ")){
+            int pos=_txtNombre.indexOf(" ");
+            _txtNombre=Character.toUpperCase(_txtNombre.charAt(0))+(_txtNombre.toLowerCase()).substring(1,pos+1)+Character.toUpperCase(_txtNombre.charAt(pos+1))+(_txtNombre.toLowerCase()).substring(pos+2);
+        }
+        else _txtNombre=Character.toUpperCase(_txtNombre.charAt(0))+(_txtNombre.toLowerCase()).substring(1);
         String txtNombre="'"+_txtNombre+"'";
+        
         _txtDireccion=Character.toUpperCase(_txtDireccion.charAt(0))+(_txtDireccion.toLowerCase()).substring(1)+" "+Integer.parseInt(_txtNum);
         String txtDireccion="'"+_txtDireccion+"'";
         
@@ -147,28 +165,37 @@ public class Logic {
         return false;
     }
     
-    public boolean nuevoProducto(String _txtNombre,String _txtPrecio,String _txtID,String _txtExistencia){
+    public boolean nuevoProducto(String _txtNombre,String _txtPrecio,String _txtID,String _txtExistencia,boolean modificar){
         int ID=0,existencia=0;
-        float precio=0;
+        double precio=0;
 
         //COMPROBACIONES
         
         //id
         try{
             ID=Integer.parseInt(_txtID);
+            if(ID==1){
+                JOptionPane.showMessageDialog(null, "ID no permitido","Atencion",JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, "ID no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
             return false;
         }
         
+        if(data.repeatedId(ID)){
+            JOptionPane.showMessageDialog(null, "ID ya ingresado","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
         //precio
         try{
-            precio=Float.parseFloat(_txtPrecio);
+            precio=Double.parseDouble(_txtPrecio);
         }
         catch(Exception e){
             try{
-                precio=Float.parseFloat(_txtPrecio.replace(',', '.'));
+                precio=Double.parseDouble(_txtPrecio.replace(',', '.'));
             }
             catch(Exception e2){
                 JOptionPane.showMessageDialog(null, "Importe no valido. Ingrese solo numeros","Atencion",JOptionPane.WARNING_MESSAGE);
@@ -203,8 +230,13 @@ public class Logic {
         
         String txtNombre="'"+_txtNombre+"'";
         
-        
-        if(data.newLine(true,"productos",ID,txtNombre,precio,existencia)) {
+        if(modificar){
+            if(data.changeProduct(ID,txtNombre,precio,existencia)){
+                JOptionPane.showMessageDialog(null, "Producto modificado exitosamente");
+                return true;
+            }
+        }
+        else if(data.newLine(true,"productos",ID,txtNombre,precio,existencia)) {
             JOptionPane.showMessageDialog(null, "Producto añadido exitosamente");
             return true;
         }
@@ -253,6 +285,12 @@ public class Logic {
         //nombre y apellido
         if(incorrectString(_txtNombre) || incorrectString(_txtApellido)){
             JOptionPane.showMessageDialog(null, "Nombre y/o apellido no valido(s)","Atencion",JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        //username repetido
+        if(data.repeatedUsername(_txtUsuario)){
+            JOptionPane.showMessageDialog(null, "Nombre de usuario no disponible","Atencion",JOptionPane.WARNING_MESSAGE);
             return false;
         }
         

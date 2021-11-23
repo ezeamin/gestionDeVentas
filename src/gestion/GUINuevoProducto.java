@@ -23,8 +23,27 @@ public class GUINuevoProducto extends javax.swing.JFrame {
     //DB data;
     Logic lo;
     boolean isAdmin;
+    boolean modificar;
     
     public GUINuevoProducto(DB _data) {
+        init(_data);
+        modificar=false;
+    }
+    
+    public GUINuevoProducto(DB _data,String[] info){
+        init(_data);
+        
+        lblTitulo.setText("Modificar producto");
+        txtID.setText(info[0]);
+        txtID.setEnabled(false);
+        txtNombre.setText(info[1]);
+        txtPrecio.setText(info[2]);
+        
+        txtStock.grabFocus();
+        modificar=true;
+    }
+    
+    private void init(DB _data){
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
@@ -53,7 +72,7 @@ public class GUINuevoProducto extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -67,8 +86,8 @@ public class GUINuevoProducto extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("Nuevo producto");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblTitulo.setText("Nuevo producto");
 
         jLabel2.setText("Nombre:");
 
@@ -116,14 +135,14 @@ public class GUINuevoProducto extends javax.swing.JFrame {
                             .addComponent(jSeparator1)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(71, 71, 71)
-                        .addComponent(jLabel1)))
+                        .addComponent(lblTitulo)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(jLabel1)
+                .addComponent(lblTitulo)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -152,7 +171,7 @@ public class GUINuevoProducto extends javax.swing.JFrame {
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
         // TODO add your handling code here:
-        if(lo.nuevoProducto(txtNombre.getText(),txtPrecio.getText(),txtID.getText(),txtStock.getText())) dispose();
+        if(lo.nuevoProducto(txtNombre.getText(),txtPrecio.getText(),txtID.getText(),txtStock.getText(),modificar)) dispose();
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     /**
@@ -161,12 +180,12 @@ public class GUINuevoProducto extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPrecio;

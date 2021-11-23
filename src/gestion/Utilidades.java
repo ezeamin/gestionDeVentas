@@ -29,7 +29,6 @@ public class Utilidades {
     public void cargarDatos(DB data,String table,DefaultTableModel tabla) throws SQLException{
         String info[];
         
-        
         for(int i=1;i<=data.getRowCount(table);i++){
             info=data.getRow(table,i); 
             

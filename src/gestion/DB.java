@@ -6,9 +6,6 @@
 package gestion;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -146,8 +143,8 @@ public class DB {
         try{
             String query="CREATE TABLE Clientes ("+
                          "Num INT(4) AUTO_INCREMENT,"+
-                         "Apellido VARCHAR(15),"+
-                         "Nombre VARCHAR(15),"+
+                         "Apellido VARCHAR(25),"+
+                         "Nombre VARCHAR(25),"+
                          "DNI LONG,"+
                          "Direccion VARCHAR(20),"+
                          "ProdComprados INT(3),"+
@@ -167,8 +164,8 @@ public class DB {
             String query="CREATE TABLE Productos ("+
                          "Num INT(4) AUTO_INCREMENT,"+
                          "ID INT(4),"+
-                         "Nombre VARCHAR(15),"+
-                         "Precio FLOAT(8),"+
+                         "Nombre VARCHAR(30),"+
+                         "Precio DOUBLE,"+
                          "Existencia INT(3),"+
                          "PRIMARY KEY(num))";
             Statement st=conexion.createStatement();
@@ -186,8 +183,8 @@ public class DB {
             String query="CREATE TABLE Ventas ("+
                          "Num INT(4) AUTO_INCREMENT,"+
                          "Fecha DATE,"+
-                         "Vendedor VARCHAR(15),"+
-                         "Cliente VARCHAR(15),"+
+                         "Vendedor VARCHAR(30),"+
+                         "Cliente VARCHAR(30),"+
                          "Importe DOUBLE,"+
                          "PRIMARY KEY(Num))";
             Statement st=conexion.createStatement();
@@ -410,7 +407,7 @@ public class DB {
     }
     
     //producto
-    public boolean newLine(boolean conectar,String table,int id,String name,float price,int existance){
+    public boolean newLine(boolean conectar,String table,int id,String name,double price,int existance){
         try{
             if(conectar) MySQLConnection();
             
@@ -722,8 +719,9 @@ public class DB {
         int cant=getExistance(id)-1;
 
         if(cant<=0){
-            eraseLine("productos",id); //me va a causar problemas si vuelvo a agregarlo
-            return;
+            //eraseLine("productos",id); //me va a causar problemas si vuelvo a agregarlo
+            cant=0;
+            //return;
         }
 
         try {
@@ -762,5 +760,114 @@ public class DB {
         catch (Exception e) {
             System.out.println("Error: "+e.getMessage());
         }
+    }
+    
+    public boolean addProductoExistente(int id,int stock) throws Exception{
+        int cantidad=0;
+        
+        try {
+            MySQLConnection();
+            
+            ResultSet rs;
+
+            String query="SELECT * FROM productos WHERE ID="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            rs=st.executeQuery(query);
+
+            if(rs.next()){
+                cantidad=rs.getInt("Existencia");
+            }
+            else{
+                MySQLCloseConnection(); 
+                return false;
+            }
+            
+            query="UPDATE productos SET Existencia="+Integer.toString(cantidad+stock)+" WHERE ID="+Integer.toString(id);
+            st.executeUpdate(query);
+
+            MySQLCloseConnection();  
+            return true;
+        } 
+        catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public boolean changeProduct(int id,String name,double price,int existance){
+        try {
+            MySQLConnection();
+            
+            String query="UPDATE productos SET Existencia="+Integer.toString(existance)+" WHERE ID="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            st.executeUpdate(query);
+            
+            query="UPDATE productos SET Precio="+Double.toString(price)+" WHERE ID="+Integer.toString(id);
+            st.executeUpdate(query);
+            
+            query="UPDATE productos SET Nombre="+name+" WHERE ID="+Integer.toString(id);
+            st.executeUpdate(query);
+
+            MySQLCloseConnection();  
+            return true;
+        } 
+        catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public boolean repeatedUsername(String txtUsuario){
+        
+        try {
+            MySQLConnection();
+            
+            ResultSet rs;
+
+            String query="SELECT * FROM empleados WHERE Usuario='"+txtUsuario+"'";
+            Statement st=conexion.createStatement();
+            rs=st.executeQuery(query);
+
+            if(rs.next()) {
+                MySQLCloseConnection();  
+                return true;
+            }
+            
+            MySQLCloseConnection();  
+            return false;
+        } 
+        catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public boolean repeatedId(int id){
+        
+        try {
+            MySQLConnection();
+            
+            ResultSet rs;
+
+            String query="SELECT * FROM productos WHERE id="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            rs=st.executeQuery(query);
+
+            if(rs.next()) {
+                MySQLCloseConnection();  
+                return true;
+            }
+            
+            MySQLCloseConnection();  
+            return false;
+        } 
+        catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return false;
     }
 }

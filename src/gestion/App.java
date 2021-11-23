@@ -10,10 +10,7 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 
 //FALTA
-//1- VER ESTADO DE PRODUCTOS AL CERRAR LA VENTANA SIN FINALIZAR
-//2- PRODUCTOS QUE LLEGAN A EXISTENCIA 0 Y SON REAGREGADOS
-//3- MODIFICACION DE EXISTENCIA DE PRODUCTOS (BORRAR DE LA LISTA?)
-//4- AGREGAR A PRODUCTOS COMPRADOS DEL CLIENTE
+//1- AGREGAR A PRODUCTOS COMPRADOS DEL CLIENTE
 
 /**
  *
@@ -31,6 +28,7 @@ public class App extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         
         data=new DB(false,"gestion","admin","admin");
+        btnIniciar.grabFocus();
         checkConnection();
     }
     
@@ -142,6 +140,9 @@ public class App extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null,"Error creando base de datos. La conexion no esta activa","Atencion",JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            int opc=JOptionPane.showInternalConfirmDialog(null, "¿Está seguro? Esta accion borrará datos existentes","Atencion",0);
+            if(opc==1) return;
+            
             data.createDB();
         }
         catch(Exception e){

@@ -27,7 +27,7 @@ public class GUIPago extends javax.swing.JFrame {
      */
     Logic lo;
     DB data;
-    double total;
+    double total,extra;
     ArrayList<String[]> ids;
     DefaultTableModel tabla;
     Vendedor vend;
@@ -148,6 +148,11 @@ public class GUIPago extends javax.swing.JFrame {
         lblVendedor = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBorder(btnProcesar.getBorder());
         jPanel1.setFocusable(false);
@@ -330,11 +335,11 @@ public class GUIPago extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblVendedor)))
+                        .addComponent(lblVendedor))
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -373,12 +378,14 @@ public class GUIPago extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(selector.getSelectedIndex()==1){
             lo.agregarCargoPorTarjeta(total,tabla);
-            total+=total*0.10;
+            extra=total*0.10;
+            total+=extra;
             setVisibleTarjeta(true);
         }
         else{
             if(tabla.getValueAt(tabla.getRowCount()-1, 0).equals("1")){
                 tabla.removeRow(tabla.getRowCount()-1);
+                total-=extra;
             }
             
             setVisibleTarjeta(false);
@@ -410,6 +417,21 @@ public class GUIPago extends javax.swing.JFrame {
         }
         else JOptionPane.showMessageDialog(null,"Error procesando la compra","Atencion",JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_btnProcesarActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        String[] info=new String[4];
+        for(int i=0;i<tablaTicket.getRowCount();i++){
+            for(int j=0;j<Integer.parseInt(tablaTicket.getValueAt(i, 2).toString());j++){
+                info[0]=tablaTicket.getValueAt(i, 0).toString();
+                info[1]=tablaTicket.getValueAt(i, 1).toString();
+                info[2]=tablaTicket.getValueAt(i, 2).toString();
+                info[3]=tablaTicket.getValueAt(i, 3).toString();
+                
+                data.addProducto(info);
+            }
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
