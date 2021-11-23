@@ -6,6 +6,9 @@
 package gestion;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -185,17 +188,41 @@ public class DB {
                          "Fecha DATE,"+
                          "Vendedor VARCHAR(15),"+
                          "Cliente VARCHAR(15),"+
-                         "Importe FLOAT(8),"+
+                         "Importe DOUBLE,"+
                          "PRIMARY KEY(Num))";
             Statement st=conexion.createStatement();
             st.executeUpdate(query);
-            System.out.println("Se ha creado la tabla"+" ventas");
+            System.out.println("Se ha creado la tabla ventas");
         }
         catch(Exception e){
-            System.out.println("Error al crear tabla"+" ventas: "+e.getMessage());
+            System.out.println("Error al crear tabla ventas: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error al crear tabla ventas","Atencion",JOptionPane.WARNING_MESSAGE);
         }
     }
+    
+    /*public String getNameIfExists(boolean conectar,String table,long dni){
+        try{
+            if(conectar) MySQLConnection();
+        
+            String query="SELECT * FROM "+table+" WHERE DNI="+dni;
+            Statement st=conexion.createStatement();
+            ResultSet rs=st.executeQuery(query);
+
+            while (rs.next()) {
+                String nombre="'"+rs.getString("Apellido")+", "+rs.getString("Nombre")+"'";
+                if(conectar) MySQLCloseConnection();
+                
+                return nombre;
+            }
+            
+            if(conectar) MySQLCloseConnection();
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+    
+        return null;
+    }*/
     
     private boolean checkExistance(boolean conectar,String table,long dni){
         try{
@@ -416,7 +443,7 @@ public class DB {
     }
     
     //venta
-    public boolean newLine(boolean conectar,String table,String date,String seller, String client,float price){
+    public boolean newLine(boolean conectar,String table,String date,String seller, String client,double price){
         try{
             if(conectar) MySQLConnection();
             
@@ -661,5 +688,79 @@ public class DB {
         }
         
         return null;
+    }
+    
+    private int getExistance(int id){
+        ResultSet rs;
+        int cantidad=-1;
+        
+        try{
+            MySQLConnection();
+
+            String query="SELECT * FROM productos WHERE id="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            rs=st.executeQuery(query);
+            
+            if(rs.next()){
+                cantidad=rs.getInt("Existencia");
+            }
+            
+            MySQLCloseConnection();
+            
+            return cantidad;
+        }
+        catch(Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+        
+        return -1;
+    }
+    
+    public void deleteProducto(String[] info){
+        int id=Integer.parseInt(info[0]);
+        int cantidad=Integer.parseInt(info[2]);
+        int cant=getExistance(id)-1;
+
+        if(cant<=0){
+            eraseLine("productos",id); //me va a causar problemas si vuelvo a agregarlo
+            return;
+        }
+
+        try {
+            MySQLConnection();
+
+            String query="UPDATE productos SET Existencia="+Integer.toString(cant)+" WHERE ID="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            st.executeUpdate(query);
+
+            refreshIndex("productos");
+
+            MySQLCloseConnection();
+        } 
+        catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+        }
+
+    }
+    
+    public void addProducto(String[] info){
+        int id=Integer.parseInt(info[0]);
+        int cantidad=Integer.parseInt(info[2]);
+        int cant=getExistance(id)+1;
+
+        try {
+            MySQLConnection();
+
+            String query="UPDATE productos SET Existencia="+Integer.toString(cant)+" WHERE ID="+Integer.toString(id);
+            Statement st=conexion.createStatement();
+            st.executeUpdate(query);
+
+            refreshIndex("productos");
+
+            MySQLCloseConnection();
+        } 
+        catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+        }
     }
 }

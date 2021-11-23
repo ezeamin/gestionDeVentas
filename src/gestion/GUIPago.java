@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -29,8 +30,10 @@ public class GUIPago extends javax.swing.JFrame {
     double total;
     ArrayList<String[]> ids;
     DefaultTableModel tabla;
+    Vendedor vend;
+    Cliente client;
     
-    public GUIPago(DB _data,ArrayList _ids) throws SQLException {
+    public GUIPago(DB _data,ArrayList _ids,Vendedor _vend) throws SQLException {
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
@@ -38,6 +41,7 @@ public class GUIPago extends javax.swing.JFrame {
         data=_data;
         lo=new Logic(data);
         ids=_ids;
+        vend=_vend;
         
         //acciones
         Action action = new AbstractAction(){ //para detectar el enter
@@ -66,6 +70,7 @@ public class GUIPago extends javax.swing.JFrame {
         txtNombre.setVisible(false);
         txtDni.setVisible(false);
         txtDireccion.setVisible(false);
+        lblVendedor.setText(vend.getName()+" "+vend.getLastname());
         setVisibleTarjeta(false);
     }
     
@@ -94,6 +99,7 @@ public class GUIPago extends javax.swing.JFrame {
         txtMesVenc.setVisible(cond);
         txtAnioVenc.setVisible(cond);
         txtCodigo.setVisible(cond);
+        lblRecargo.setVisible(cond);
     }
 
     /**
@@ -116,7 +122,7 @@ public class GUIPago extends javax.swing.JFrame {
         txtNombre = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         icon = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnProcesar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtEntrada = new javax.swing.JTextField();
@@ -133,14 +139,17 @@ public class GUIPago extends javax.swing.JFrame {
         txtMesVenc = new javax.swing.JTextField();
         txtAnioVenc = new javax.swing.JTextField();
         btnValidar = new javax.swing.JButton();
+        lblRecargo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaTicket = new javax.swing.JTable();
         txtTotal = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        lblVendedor = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setBorder(jButton1.getBorder());
+        jPanel1.setBorder(btnProcesar.getBorder());
         jPanel1.setFocusable(false);
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -191,7 +200,12 @@ public class GUIPago extends javax.swing.JFrame {
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 180, 20, 20));
         jPanel1.add(icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, 90, 90));
 
-        jButton1.setText("Procesar pago");
+        btnProcesar.setText("Procesar pago");
+        btnProcesar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProcesarActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Pago");
@@ -205,7 +219,7 @@ public class GUIPago extends javax.swing.JFrame {
             }
         });
 
-        jPanel2.setBorder(jButton1.getBorder());
+        jPanel2.setBorder(btnProcesar.getBorder());
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblCodigo.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -248,6 +262,11 @@ public class GUIPago extends javax.swing.JFrame {
         });
         jPanel2.add(btnValidar, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 210, -1, -1));
 
+        lblRecargo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblRecargo.setForeground(new java.awt.Color(255, 0, 0));
+        lblRecargo.setText("10% de recargo");
+        jPanel2.add(lblRecargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 25, 140, 30));
+
         tablaTicket.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -267,6 +286,12 @@ public class GUIPago extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel8.setText("Total: $");
 
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel7.setText("Vendedor:");
+
+        lblVendedor.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblVendedor.setText("nombre");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -274,7 +299,6 @@ public class GUIPago extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -287,19 +311,30 @@ public class GUIPago extends javax.swing.JFrame {
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton1)
+                            .addComponent(btnProcesar)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTotal)))))
-                .addContainerGap(37, Short.MAX_VALUE))
+                                .addComponent(txtTotal)))
+                        .addContainerGap(37, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblVendedor)
+                        .addGap(172, 172, 172))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblVendedor)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -314,7 +349,7 @@ public class GUIPago extends javax.swing.JFrame {
                             .addComponent(jLabel8)
                             .addComponent(txtTotal))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(btnProcesar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -328,7 +363,7 @@ public class GUIPago extends javax.swing.JFrame {
     private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
         try {
             // TODO add your handling code here:
-            lo.getCliente(txtEntrada.getText(),txtApellido,txtNombre,txtDni,txtDireccion);
+            client=lo.getCliente(txtEntrada.getText(),txtApellido,txtNombre,txtDni,txtDireccion);
         } catch (SQLException ex) {
             Logger.getLogger(GUIPago.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -338,6 +373,7 @@ public class GUIPago extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(selector.getSelectedIndex()==1){
             lo.agregarCargoPorTarjeta(total,tabla);
+            total+=total*0.10;
             setVisibleTarjeta(true);
         }
         else{
@@ -353,8 +389,27 @@ public class GUIPago extends javax.swing.JFrame {
 
     private void btnValidarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValidarActionPerformed
         // TODO add your handling code here:
-        lo.validarTarjeta(txtTarjeta.getText(),txtMesVenc.getText(),txtAnioVenc.getText(),txtCodigo.getText());
+        lo.validarTarjeta(txtTarjeta.getText(),txtMesVenc.getText(),txtAnioVenc.getText(),txtCodigo.getText(),true);
     }//GEN-LAST:event_btnValidarActionPerformed
+
+    private void btnProcesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcesarActionPerformed
+        // TODO add your handling code here:
+        if(selector.getSelectedIndex()==1){
+            if(!lo.validarTarjeta(txtTarjeta.getText(),txtMesVenc.getText(),txtAnioVenc.getText(),txtCodigo.getText(),false)) return;
+        }
+        
+        if(client==null){
+            JOptionPane.showMessageDialog(null,"Cargue datos de cliente","Atencion",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        //cargar a DB
+        if(lo.nuevaVenta(client,total,vend,ids)){
+            JOptionPane.showMessageDialog(null,"Pago procesado con exito");
+            dispose();
+        }
+        else JOptionPane.showMessageDialog(null,"Error procesando la compra","Atencion",JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_btnProcesarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -362,15 +417,16 @@ public class GUIPago extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCargar;
+    private javax.swing.JButton btnProcesar;
     private javax.swing.JButton btnValidar;
     private javax.swing.JLabel icon;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -378,9 +434,11 @@ public class GUIPago extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblRecargo;
     private javax.swing.JLabel lblTarjeta;
     private javax.swing.JLabel lblVenc1;
     private javax.swing.JLabel lblVenc2;
+    private javax.swing.JLabel lblVendedor;
     private javax.swing.JComboBox<String> selector;
     private javax.swing.JTable tablaTicket;
     private javax.swing.JTextField txtAnioVenc;

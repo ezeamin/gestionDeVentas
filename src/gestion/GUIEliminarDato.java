@@ -37,6 +37,8 @@ public class GUIEliminarDato extends javax.swing.JFrame {
     public GUIEliminarDato(DB _data,String _table,long _thisDNI) throws SQLException {
         thisDNI=_thisDNI;
         init(_data,_table);
+        
+        //tendria que pasar el usuario a una tabla de "eliminados" en vez de realmente borrarlos
     }
     
     public GUIEliminarDato(DB _data,String _table) throws SQLException {

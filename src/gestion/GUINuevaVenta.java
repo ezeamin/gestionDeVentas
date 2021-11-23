@@ -35,8 +35,9 @@ public class GUINuevaVenta extends javax.swing.JFrame {
     DefaultTableModel tabla2;
     TableRowSorter sorter;
     ArrayList<String[]> ids;
+    Vendedor vend;
     
-    public GUINuevaVenta(DB _data) throws SQLException {
+    public GUINuevaVenta(DB _data,Vendedor _vend) throws SQLException {
         initComponents();
         FlatLightLaf.setup();
         setLocationRelativeTo(null);
@@ -44,6 +45,7 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         data=_data;
         lo=new Logic(data);
         ids=new ArrayList<String[]>();
+        vend=_vend;
         
         Action action = new AbstractAction(){ //para detectar el enter
             @Override
@@ -54,10 +56,10 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         };
         txtEntrada.addActionListener(action);
         
-        initTable();
+        initTable(true);
     }
     
-    private void initTable() throws SQLException{
+    private void initTable(boolean opc) throws SQLException{
         tabla1=new DefaultTableModel();
         String names[]=lo.getColumnNames("productos");
         
@@ -70,12 +72,14 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         sorter = new TableRowSorter<>(tabla1);
         tablaProductos.setRowSorter(sorter);
         
-        tabla2=new DefaultTableModel();
-        tabla2.addColumn("ID");
-        tabla2.addColumn("Nombre");
-        tabla2.addColumn("Cantidad");
-        tabla2.addColumn("Precio");
-        tablaTicket.setModel(tabla2);
+        if(opc){
+            tabla2=new DefaultTableModel();
+            tabla2.addColumn("ID");
+            tabla2.addColumn("Nombre");
+            tabla2.addColumn("Cantidad");
+            tabla2.addColumn("Precio");
+            tablaTicket.setModel(tabla2);
+        }
         
         new Utilidades().cargarDatos(data, "productos", tabla1);
         
@@ -235,10 +239,11 @@ public class GUINuevaVenta extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(JLabel3)
-                    .addComponent(txtTotal))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(JLabel3)
+                        .addComponent(txtTotal)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnContinuar)
                 .addContainerGap(35, Short.MAX_VALUE))
@@ -251,6 +256,9 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         // TODO add your handling code here:
         int row;
         boolean end=false;
+        
+        //verificar que ese producto tiene existencia disponible
+        //restar existencia en tabla Y DB (por si otra instancia esta haciendo la venta)
         
         try{
             int selectedRow=tablaProductos.getSelectedRow();
@@ -268,11 +276,10 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             for(int i=0;i<tabla2.getRowCount();i++){
                 if(info[0].equals(tabla2.getValueAt(i, 0).toString())){
                     int cant=Integer.parseInt(tabla2.getValueAt(i, 2).toString());
-                    float precio=Float.parseFloat(tabla2.getValueAt(i, 3).toString())/cant;
+                    float precio=Float.parseFloat(tabla2.getValueAt(row, 3).toString());
 
                     cant++;
                     tabla2.setValueAt(cant, i, 2);
-                    tabla2.setValueAt(precio*cant, i, 3);
                     end=true;
                     
                     info[2]=Integer.toString(cant);
@@ -290,6 +297,9 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             }
 
             new Utilidades().setTotal(txtTotal,tabla2);
+            
+            data.deleteProducto(ids.get(row)); //PERO SI NO SE HACE LA COMPRA, NO BORRAR
+            initTable(false);
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null,"Error: No hay datos seleccionados","Atencion",JOptionPane.WARNING_MESSAGE);
@@ -336,9 +346,12 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             int row=tablaTicket.getSelectedRow();
             
             int cant=Integer.parseInt(tabla2.getValueAt(row, 2).toString());
-            float precio=Float.parseFloat(tabla2.getValueAt(row, 3).toString())/cant;
+            float precio=Float.parseFloat(tabla2.getValueAt(row, 3).toString());
             
             cant--;
+            
+            data.addProducto(ids.get(row));
+            initTable(false);
             
             if(cant==0){
                 tabla2.removeRow(row);
@@ -346,8 +359,6 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             }
             else{
                 tabla2.setValueAt(cant, row, 2);
-                tabla2.setValueAt(precio*cant, row, 3);
-                
                 
                 String info[]=new String[4];
                 info[0]=tabla2.getValueAt(row, 0).toString();
@@ -359,6 +370,7 @@ public class GUINuevaVenta extends javax.swing.JFrame {
             }
             
             new Utilidades().setTotal(txtTotal,tabla2);
+            
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null,"Error: No hay datos seleccionados","Atencion",JOptionPane.WARNING_MESSAGE);
@@ -375,7 +387,7 @@ public class GUINuevaVenta extends javax.swing.JFrame {
         if(opc==1) return;
         
         try {
-            new GUIPago(data,ids).setVisible(true);
+            new GUIPago(data,ids,vend).setVisible(true);
         } catch (SQLException ex) {
             Logger.getLogger(GUINuevaVenta.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.ResultSetMetaData;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
@@ -263,8 +264,7 @@ public class Logic {
         
         if(isAdmin) admin=1;
         
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fechaAct="'"+dtf.format(LocalDateTime.now())+"'";
+        String fechaAct=getCurrentDate();
         
         String txtUsuario="'"+_txtUsuario+"'";
         String txtContrasenia="'"+_txtContrasenia+"'";
@@ -280,6 +280,20 @@ public class Logic {
         }
         
         return false;
+    }
+    
+    public boolean nuevaVenta(Cliente client,double total,Vendedor vend,ArrayList ids){
+        if(data.newLine(true,"ventas",getCurrentDate(),"'"+vend.getName()+" "+vend.getLastname()+"'","'"+client.getNombre()+" "+client.getApellido()+"'",total)){
+            //agregar productos comprados
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private String getCurrentDate(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return "'"+dtf.format(LocalDateTime.now())+"'";
     }
     
     private boolean eliminar(String table,long DNI){
@@ -354,6 +368,8 @@ public class Logic {
         if(incorrectDNI(_txtDNI)) return false;
         else DNI=Long.parseLong(_txtDNI);
         
+        //tendria que pasar el usuario a una tabla de "eliminados" en vez de realmente borrarlos
+        
         return eliminar("clientes",DNI);
     }
     
@@ -392,10 +408,10 @@ public class Logic {
         return names;
     }
     
-    public void getCliente(String _txtDni,JLabel txtApellido,JLabel txtNombre,JLabel txtDni,JLabel txtDireccion) throws SQLException{
+    public Cliente getCliente(String _txtDni,JLabel txtApellido,JLabel txtNombre,JLabel txtDni,JLabel txtDireccion) throws SQLException{
         long dni;
         
-        if(incorrectDNI(_txtDni)) return;
+        if(incorrectDNI(_txtDni)) return null;
         else dni=Long.parseLong(_txtDni);
         
         Cliente client=data.createObjectCliente(dni);
@@ -409,10 +425,14 @@ public class Logic {
             txtDni.setVisible(true);
             txtDireccion.setText(client.getDireccion());
             txtDireccion.setVisible(true);
+            
+            return client;
         }
         else{
             new GUINuevoCliente(data,dni).setVisible(true);
         }
+        
+        return null;
     }
     
     public void agregarCargoPorTarjeta(double total,DefaultTableModel tabla){
@@ -428,26 +448,26 @@ public class Logic {
         tabla.addRow(info);
     }
     
-    public void validarTarjeta(String txtTarjeta,String txtMesVenc,String txtAnioVenc,String txtCodigo){
+    public boolean validarTarjeta(String txtTarjeta,String txtMesVenc,String txtAnioVenc,String txtCodigo,boolean opc){
         long tarjeta;
         int mes,anio,codigo;
         
         if("".equals(txtTarjeta) || "".equals(txtMesVenc) || "".equals(txtAnioVenc) || "".equals(txtCodigo)){
             JOptionPane.showMessageDialog(null,"Complete los campos","Atencion",JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
         }
         
         try{
             if(txtTarjeta.length()!=16){
                 JOptionPane.showMessageDialog(null,"Tarjeta no valida","Atencion",JOptionPane.WARNING_MESSAGE);
-                return;
+                return false;
             }
             
             tarjeta=Long.parseLong(txtTarjeta);
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null,"Datos no validos","Atencion",JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
         }
         
         try{
@@ -465,31 +485,32 @@ public class Logic {
             
             if(mes>12 || mes<1 ){
                 JOptionPane.showMessageDialog(null,"Fecha no valida","Atencion",JOptionPane.WARNING_MESSAGE);
-                return;
+                return false;
             }
             if((anio==anioAct && mes<=mesAct) || anio<anioAct){
                 JOptionPane.showMessageDialog(null,"Tarjeta vencida","Atencion",JOptionPane.WARNING_MESSAGE);
-                return;
+                return false;
             }
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null,"Fecha no valida","Atencion",JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
         }
         
         try{
             if(txtCodigo.length()!=3){
                 JOptionPane.showMessageDialog(null,"Codigo no valido","Atencion",JOptionPane.WARNING_MESSAGE);
-                return;
+                return false;
             }
 
             codigo=Integer.parseInt(txtCodigo);
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null,"Codigo no valido","Atencion",JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
         }
         
-        JOptionPane.showMessageDialog(null,"Tarjeta validada correctamente");
+        if(opc) JOptionPane.showMessageDialog(null,"Tarjeta validada correctamente");
+        return true;
     }
 }
